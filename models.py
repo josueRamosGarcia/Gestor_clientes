@@ -106,6 +106,18 @@ class Cliente(db.Model):
         'Correo',
         back_populates='cliente'
     )
+    telefonos = db.relationship(
+        'Telefono',
+        back_populates='cliente'
+    )
+    prestamos = db.relationship(
+        'Prestamo',
+        back_populates='cliente'
+    )
+    archivos = db.relationship(
+        'Archivo',
+        back_populates='cliente'
+    )
 
     def __repr__(self):
         return (
@@ -114,7 +126,7 @@ class Cliente(db.Model):
             f"{self.ec_id} - {self.corr_id}"
         )
     
-class Telefono(db.model):
+class Telefono(db.Model):
     __tablename__ = 'telefonos'
 
     tel_id = db.Column(
@@ -127,7 +139,7 @@ class Telefono(db.model):
         nullable=False
     )
     tel_nombre = db.Column(
-        db.String(100),
+        db.String(128),
         nullable=False
     )
     tel_parentesco = db.Column(
@@ -136,13 +148,13 @@ class Telefono(db.model):
     )
     cte_id = db.Column(
         db.Integer,
-        db.ForeigKey('clientes.cte_id'),
+        db.ForeignKey('clientes.cte_id'),
         nullable=False
     )
 
     cliente = db.relationship(
-        'clientes',
-        backref='telefonos'
+        'Cliente',
+        back_populates='telefonos'
     )
 
     def __repr__(self):
@@ -152,7 +164,7 @@ class Telefono(db.model):
         )
             
     
-class Estatus_prestamo(db.model):
+class EstatusPrestamo(db.Model):
     __tablename__ = 'estatus_prestamos'
 
     ep_id = db.Column(
@@ -165,10 +177,15 @@ class Estatus_prestamo(db.model):
         nullable=False
     )
 
+    prestamos = db.relationship(
+        'Prestamo',
+        back_populates='estatus'
+    )
+
     def __repr__(self):
         return f"{self.ep_id} - {self.ep_nombre}"
     
-class Tipo_prestamo(db.model):
+class TipoPrestamo(db.Model):
     __tablename__ = 'tipos_prestamos'
 
     tp_id = db.Column(
@@ -181,10 +198,15 @@ class Tipo_prestamo(db.model):
         nullable=False
     )
 
+    prestamos = db.relationship(
+        'Prestamo',
+        back_populates='tipo'
+    )
+
     def __repr__(self):
         return f"{self.tp_id} - {self.tp_nombre}"
 
-class Prestamo(db.model):
+class Prestamo(db.Model):
     __tablename__ = 'prestamos'
 
     prst_id = db.Column(
@@ -235,20 +257,21 @@ class Prestamo(db.model):
     )
     ep_id = db.Column(
         db.Integer,
-        db.ForeignKey('estatus_prestamo.ep_id')
+        db.ForeignKey('estatus_prestamos.ep_id'),
+        nullable=False
     )
 
     cliente = db.relationship(
-        'clientes',
-        backref='prestamos'
+        'Cliente',
+        back_populates='prestamos'
     )
-    tipo_prestamo = db.relatrionship(
-        'tipos_prestamos',
-        backref='prestamos'
+    tipo = db.relationship(
+        'TipoPrestamo',
+        back_populates='prestamos'
     )
-    estatus_prestamo = db.relationship(
-        'estatus_prestamos',
-        backref='prestamos'
+    estatus = db.relationship(
+        'EstatusPrestamo',
+        back_populates='prestamos'
     )
 
     def __repr__(self):
@@ -260,7 +283,7 @@ class Prestamo(db.model):
             f"{self.cte_id} - {self.tp_id} - {self.ep_id}"
         )
 
-class Usuario(db.model):
+class Usuario(db.Model):
     __tablename__ = 'usuarios'
 
     usr_id = db.Column(
@@ -286,13 +309,18 @@ class Usuario(db.model):
         default=True
     )
 
+    eventos = db.relationship(
+        'EventoAuditoria',
+        back_populates='usuario'
+    )
+
     def __repr__(self):
         return (
             f"{self.usr_id} - {self.usr_nombre} - "
             f"{self.usr_username} - {self.usr_activo}"
         )
 
-class Operacion_auditoria(db.model):
+class OperacionAuditoria(db.Model):
     __tablename__ = 'operaciones_auditoria'
 
     op_id = db.Column(
@@ -302,13 +330,18 @@ class Operacion_auditoria(db.model):
     )
     op_nombre = db.Column(
         db.String(32),
-        nulleable=False
+        nullable=False
+    )
+
+    eventos = db.relationship(
+        'EventoAuditoria',
+        back_populates='operacion'
     )
 
     def __repr__(self):
         return f"{self.op_id} - {self.op_nombre}"
 
-class Evento_auditoria(db.model):
+class EventoAuditoria(db.Model):
     __tablename__ = 'eventos_auditoria'
 
     adt_id = db.Column(
@@ -345,22 +378,22 @@ class Evento_auditoria(db.model):
         nullable=False
     )
 
-    operacion_auditoria = db.relationship(
-        'operaciones_auditoria',
-        backref='eventos_auditoria'
+    operacion = db.relationship(
+        'OperacionAuditoria',
+        back_populates='eventos'
     )
     usuario = db.relationship(
-        'usuarios',
-        backref='eventos_auditorias'
+        'Usuario',
+        back_populates='eventos'
     )
 
     def __repr__(self):
         return (
-            f"{self.adt_id} - {self.adt_tabla} - {self.adt_oper} - "
-            f"{self.adt_fecha} - {self.adt_ip} - {self.usr_id}"
+            f"{self.adt_id} - {self.adt_tabla} - {self.adt_fecha} - "
+            f"{self.adt_ip} - {self.op_id} - {self.usr_id}"
         )
 
-class Tipo_archivo(db.model):
+class TipoArchivo(db.Model):
     __tablename__ = 'tipos_archivos'
     
     ta_id = db.Column(
@@ -371,6 +404,11 @@ class Tipo_archivo(db.model):
     ta_nombre = db.Column(
         db.String(32),
         nullable=False
+    )
+
+    archivos = db.relationship(
+        'Archivo',
+        back_populates='tipo'
     )
 
     def __repr__(self):
@@ -390,7 +428,7 @@ class Archivo(db.Model):
     )
     arch_nombre = db.Column(
         db.String(64),
-        nulleable=False
+        nullable=False
     ) 
     arch_f_subida = db.Column(
         db.DateTime(timezone=True),
@@ -407,13 +445,13 @@ class Archivo(db.Model):
         nullable=False
     )
 
-    tipo_archivo = db.relationship(
-        'tipos_archivos',
-        backref='archivos'
+    tipo = db.relationship(
+        'TipoArchivo',
+        back_populates='archivos'
     )
     cliente = db.relationship(
-        'clientes',
-        backref='archivos'
+        'Cliente',
+        back_populates='archivos'
     )
 
     def __repr__(self):
