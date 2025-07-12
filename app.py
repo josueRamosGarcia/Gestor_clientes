@@ -2,7 +2,8 @@ from flask import Flask, request, redirect, render_template, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 from config import Config
-from models import db, Usuario, Cliente
+from models import db, Usuario, Cliente, Prestamo
+from functools import wraps
 import secrets
 
 # Inicializar la app Flask y cargar configuración
@@ -29,12 +30,12 @@ def get_client_ip():
 
 def login_required(f):
     """Decorador para verificar que el usuario esté logueado"""
-    from functools import wraps
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'usr_id' not in session:
             flash("Debes iniciar sesión para acceder a esta página")
             return redirect('/login')
+        
         return f(*args, **kwargs)
     return decorated_function
 
@@ -48,6 +49,12 @@ def get_usuario_logueado():
 @app.route('/')
 def inicio():
     return render_template('login.html')
+
+@app.route('/inicio')
+@login_required
+def pagina_inicio():
+    usuario = get_usuario_logueado()
+    return render_template('inicio.html', nombre_usuario=usuario.usr_username)
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -72,7 +79,7 @@ def login():
     session['usr_id'] = usuario.usr_id
     session['ses_ip'] = get_client_ip()
 
-    return render_template('inicio.html', nombre_usuario=usuario.usr_username)
+    return redirect('/inicio')
 
 @app.route('/buscar_clientes', methods=['POST'])
 @login_required
@@ -93,6 +100,28 @@ def buscar_clientes():
                                 clientes=clientes, 
                                 busqueda=busqueda
                                 )
+    
+""" @app.route('/cliente/')
+@login_required
+def cliente(cliente_id):
+    # Obtener el cliente de la base de datos
+    cliente = db.session.query(Cliente).filter_by(cte_id=cliente_id).first()
+    
+    if not cliente:
+        flash("Cliente no encontrado")
+        return redirect('/inicio')
+    
+    # Obtener los préstamos del cliente (si tienes un modelo de Préstamo)
+    prestamos = db.session.query(Prestamo).filter_by(cte_id=cliente_id).all()
+    
+    return render_template('clientes.html', cliente=cliente, prestamos=prestamos) """
+
+@app.route('/cliente/<int:cliente_id>')
+@login_required
+def cliente_detalles(cliente_id):
+    cliente = db.session.query(Cliente).filter_by(cte_id=cliente_id).first()
+    prestamos = db.session.query(Prestamo).filter_by(cte_id=cliente_id).all()
+    return render_template('clientes.html', cliente=cliente, prestamos=prestamos)
 
 
 if __name__ == '__main__':
