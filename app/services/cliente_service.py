@@ -2,13 +2,9 @@ from ..repositories.cliente_repository import ClienteRepository
 from ..repositories.prestamo_repository import PrestamoRepository
 
 class ClienteService:
-    def __init__(
-        self,
-        cte_repo: ClienteRepository,
-        prst_repo: PrestamoRepository
-    ):
-        self.cte_repo = cte_repo
-        self.prst_repo = prst_repo
+    def __init__(self):
+        self.cte_repo = ClienteRepository()
+        self.prst_repo = PrestamoRepository()
 
     def get_client_and_credits(self, id):
         cliente = self.cte_repo.get_by_id(id)
@@ -16,3 +12,5 @@ class ClienteService:
 
         return cliente, prestamos
         
+    def search_by_name(self, busqueda):
+        return self.cte_repo.search_by_name(busqueda)

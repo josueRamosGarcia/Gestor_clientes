@@ -10,11 +10,13 @@ def inicio():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    auth_service = AuthService()
+    if request.method == 'GET':
+        return render_template('login.html')
 
     username = request.form.get('usuario')
     password = request.form.get('contraseña')
 
+    auth_service = AuthService()
     user, error = auth_service.authenticate_user(username, password)
 
     if error:
@@ -23,4 +25,4 @@ def login():
     session['usr_id'] = user.usr_id
     session['ses_ip'] = get_client_ip()
 
-    return render_template('inicio.html')
+    return render_template('inicio.html', nombre_usuario=user.usr_username)
