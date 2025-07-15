@@ -1,5 +1,5 @@
 from .base_repository import BaseRepository
-from models.cliente import Cliente
+from ..models.cliente import Cliente
 
 class ClienteRepository(BaseRepository):
     def __init__(self):

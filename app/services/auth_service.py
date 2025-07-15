@@ -1,10 +1,10 @@
-from repositories.usuario_repository import UsuarioRepository
+from ..repositories.usuario_repository import UsuarioRepository
 from werkzeug.security import check_password_hash
-from utils.helpers import get_usr_id_log
+from ..utils.helpers import get_usr_id_log
 
 class AuthService:
-    def __init__(self, usr_repo: UsuarioRepository):
-        self.usr_repo = usr_repo
+    def __init__(self):
+        self.usr_repo = UsuarioRepository()
 
     def get_logged_user(self):
         user_id = get_usr_id_log()

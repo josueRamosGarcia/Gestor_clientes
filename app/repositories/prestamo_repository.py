@@ -1,5 +1,5 @@
 from .base_repository import BaseRepository
-from models.prestamo import Prestamo
+from ..models.prestamo import Prestamo
 
 class PrestamoRepository(BaseRepository):
     def __init__(self):

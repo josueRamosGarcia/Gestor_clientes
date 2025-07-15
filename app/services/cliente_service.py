@@ -1,5 +1,5 @@
-from repositories.cliente_repository import ClienteRepository
-from repositories.prestamo_repository import PrestamoRepository
+from ..repositories.cliente_repository import ClienteRepository
+from ..repositories.prestamo_repository import PrestamoRepository
 
 class ClienteService:
     def __init__(

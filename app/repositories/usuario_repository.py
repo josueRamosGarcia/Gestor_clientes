@@ -1,5 +1,5 @@
 from .base_repository import BaseRepository
-from models.usuario import Usuario
+from ..models.usuario import Usuario
 
 class UsuarioRepository(BaseRepository):
     def __init__(self):
@@ -9,4 +9,4 @@ class UsuarioRepository(BaseRepository):
     def get_by_username(self, username):
         return self.db.session.query(Usuario).filter_by(
             usr_username = username
-        ).firs()
+        ).first()
