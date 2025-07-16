@@ -1,29 +1,7 @@
 // Variables para almacenar los datos temporales
-let correos = [];
 let telefonos = [];
 let archivos = [];
-
-// Función para agregar correo
-document.getElementById('agregar-correo').addEventListener('click', function() {
-    const email = document.getElementById('correo-email').value;
-    const password = document.getElementById('correo-password').value;
-    const localizacion = document.getElementById('correo-localizacion').value;
-    
-    if (!email) {
-    alert('El correo electrónico es obligatorio');
-    return;
-    }
-    
-    correos.push({
-    email: email,
-    password: password,
-    localizacion: localizacion
-    });
-    
-    actualizarListaCorreos();
-    document.getElementById('correo-form').reset();
-    bootstrap.Modal.getInstance(document.getElementById('correoModal')).hide();
-});
+let prestamos = [];
 
 // Función para agregar teléfono
 document.getElementById('agregar-telefono').addEventListener('click', function() {
@@ -72,47 +50,42 @@ document.getElementById('subir-archivo').addEventListener('click', function() {
     bootstrap.Modal.getInstance(document.getElementById('archivoModal')).hide();
 });
 
-// Función para actualizar la lista de correos en la UI
-function actualizarListaCorreos() {
-    const container = document.getElementById('correos-container');
-    
-    if (correos.length === 0) {
-    container.innerHTML = '<div class="alert alert-info">No se han agregado correos electrónicos aún.</div>';
+// Función para agregar préstamo
+document.getElementById('agregar-prestamo').addEventListener('click', function() {
+  const financiera = document.getElementById('prestamo-financiera').value;
+  const tipo = document.getElementById('prestamo-tipo').value;
+  const cat = document.getElementById('prestamo-cat').value;
+  const monto = document.getElementById('prestamo-monto').value;
+  const descuento = document.getElementById('prestamo-descuento').value;
+  const plazo = document.getElementById('prestamo-plazo').value;
+  const importe = document.getElementById('prestamo-importe').value;
+  const fecha = document.getElementById('prestamo-fecha').value;
+  const estatus = document.getElementById('prestamo-estatus').value;
+  const liquida = document.getElementById('prestamo-liquida').value;
+  
+  // Validar campos obligatorios
+  if (!financiera || !tipo || !cat || !monto || !descuento || !plazo || !importe || !fecha || !estatus) {
+    alert('Todos los campos marcados como obligatorios (*) deben ser completados');
     return;
-    }
-    
-    let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Correo</th><th>Localización</th><th>Acciones</th></tr></thead><tbody>';
-    
-    correos.forEach((correo, index) => {
-    html += `
-        <tr>
-        <td>${correo.email}</td>
-        <td>${correo.localizacion || 'N/A'}</td>
-        <td>
-            <button class="btn btn-edit-small" onclick="editarCorreo(${index})">
-            <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-cancel-small" onclick="eliminarCorreo(${index})">
-            <i class="fas fa-trash"></i>
-            </button>
-        </td>
-        </tr>
-    `;
-    });
-    
-    html += '</tbody></table></div>';
-    
-    // Agregar campos ocultos para cada correo
-    correos.forEach((correo, index) => {
-    html += `
-        <input type="hidden" name="correos[${index}][corr_nombre]" value="${correo.email}">
-        <input type="hidden" name="correos[${index}][corr_contraseña]" value="${correo.password || ''}">
-        <input type="hidden" name="correos[${index}][corr_localizacion]" value="${correo.localizacion || ''}">
-    `;
-    });
-    
-    container.innerHTML = html;
-}
+  }
+  
+  prestamos.push({
+    financiera: financiera,
+    tipo: tipo,
+    cat: cat,
+    monto: monto,
+    descuento: descuento,
+    plazo: plazo,
+    importe: importe,
+    fecha: fecha,
+    estatus: estatus,
+    liquida: liquida || null
+  });
+  
+  actualizarListaPrestamos();
+  document.getElementById('prestamo-form').reset();
+  bootstrap.Modal.getInstance(document.getElementById('prestamoModal')).hide();
+});
 
 // Función para actualizar la lista de teléfonos en la UI
 function actualizarListaTelefonos() {
@@ -197,27 +170,77 @@ function actualizarListaArchivos() {
     });
     
     container.innerHTML = html;
-}
+} 
 
-// Funciones para editar/eliminar elementos (simplificadas)
-function editarCorreo(index) {
-    const correo = correos[index];
-    document.getElementById('correo-email').value = correo.email;
-    document.getElementById('correo-password').value = correo.password || '';
-    document.getElementById('correo-localizacion').value = correo.localizacion || '';
+// Función para actualizar la lista de préstamos en la UI
+function actualizarListaPrestamos() {
+  const container = document.getElementById('prestamos-container');
+  
+  if (prestamos.length === 0) {
+    container.innerHTML = '<div class="alert alert-info">No se han agregado préstamos aún.</div>';
+    return;
+  }
+  
+  let html = `
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Financiera</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>CAT</th>
+            <th>Plazo</th>
+            <th>Estatus</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  prestamos.forEach((prestamo, index) => {
+    const tipoNombre = document.getElementById('prestamo-tipo').options[prestamo.tipo-1].text;
+    const estatusNombre = document.getElementById('prestamo-estatus').options[prestamo.estatus-1].text;
     
-    correos.splice(index, 1);
-    actualizarListaCorreos();
-    
-    const modal = new bootstrap.Modal(document.getElementById('correoModal'));
-    modal.show();
-}
-
-function eliminarCorreo(index) {
-    if (confirm('¿Estás seguro de eliminar este correo?')) {
-    correos.splice(index, 1);
-    actualizarListaCorreos();
-    }
+    html += `
+      <tr>
+        <td>${prestamo.financiera}</td>
+        <td>${tipoNombre}</td>
+        <td>$${parseFloat(prestamo.monto).toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        <td>${prestamo.cat}%</td>
+        <td>${prestamo.plazo} meses</td>
+        <td>${estatusNombre}</td>
+        <td>
+          <button class="btn btn-edit-small" onclick="editarPrestamo(${index})">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn btn-cancel-small" onclick="eliminarPrestamo(${index})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  html += '</tbody></table></div>';
+  
+  // Agregar campos ocultos para cada préstamo
+  prestamos.forEach((prestamo, index) => {
+    html += `
+      <input type="hidden" name="prestamos[${index}][prst_financiera]" value="${prestamo.financiera}">
+      <input type="hidden" name="prestamos[${index}][tp_id]" value="${prestamo.tipo}">
+      <input type="hidden" name="prestamos[${index}][prst_cat]" value="${prestamo.cat}">
+      <input type="hidden" name="prestamos[${index}][prst_monto]" value="${prestamo.monto}">
+      <input type="hidden" name="prestamos[${index}][prst_descuento]" value="${prestamo.descuento}">
+      <input type="hidden" name="prestamos[${index}][prst_plazo]" value="${prestamo.plazo}">
+      <input type="hidden" name="prestamos[${index}][prst_imp_pagar]" value="${prestamo.importe}">
+      <input type="hidden" name="prestamos[${index}][prst_f_p_desc]" value="${prestamo.fecha}">
+      <input type="hidden" name="prestamos[${index}][ep_id]" value="${prestamo.estatus}">
+      ${prestamo.liquida ? `<input type="hidden" name="prestamos[${index}][prst_id_liq]" value="${prestamo.liquida}">` : ''}
+    `;
+  });
+  
+  container.innerHTML = html;
 }
 
 function editarTelefono(index) {
@@ -257,4 +280,33 @@ function eliminarArchivo(index) {
     archivos.splice(index, 1);
     actualizarListaArchivos();
     }
+}
+
+// Funciones para editar/eliminar préstamos
+function editarPrestamo(index) {
+  const prestamo = prestamos[index];
+  
+  document.getElementById('prestamo-financiera').value = prestamo.financiera;
+  document.getElementById('prestamo-tipo').value = prestamo.tipo;
+  document.getElementById('prestamo-cat').value = prestamo.cat;
+  document.getElementById('prestamo-monto').value = prestamo.monto;
+  document.getElementById('prestamo-descuento').value = prestamo.descuento;
+  document.getElementById('prestamo-plazo').value = prestamo.plazo;
+  document.getElementById('prestamo-importe').value = prestamo.importe;
+  document.getElementById('prestamo-fecha').value = prestamo.fecha;
+  document.getElementById('prestamo-estatus').value = prestamo.estatus;
+  document.getElementById('prestamo-liquida').value = prestamo.liquida || '';
+  
+  prestamos.splice(index, 1);
+  actualizarListaPrestamos();
+  
+  const modal = new bootstrap.Modal(document.getElementById('prestamoModal'));
+  modal.show();
+}
+
+function eliminarPrestamo(index) {
+  if (confirm('¿Estás seguro de eliminar este préstamo?')) {
+    prestamos.splice(index, 1);
+    actualizarListaPrestamos();
+  }
 }
