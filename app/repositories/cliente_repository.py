@@ -1,5 +1,5 @@
 from .base_repository import BaseRepository
-from ..models.cliente import Cliente
+from ..models.cliente import Cliente, EstatusCliente
 
 class ClienteRepository(BaseRepository):
     def __init__(self):
@@ -13,3 +13,7 @@ class ClienteRepository(BaseRepository):
                 Cliente.cte_apellidos.ilike(f"%{busqueda}%")
             )
         ).all()
+
+    def get_estatus(self):
+        return self.db.session.query(EstatusCliente).all()
+    

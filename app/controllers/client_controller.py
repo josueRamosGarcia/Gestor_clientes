@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, redirect
 from ..services.auth_service import AuthService
 from ..services.cliente_service import ClienteService
 from ..utils.decorators import loguin_requerid
@@ -39,4 +39,28 @@ def detalle_cliente(cte_id):
 @cte_bp.route('/agregar_cliente')
 @loguin_requerid
 def agregar_cliente():
-    return render_template('add_clientes.html')
+    estatus_clientes = cte_service.get_status()
+
+    return render_template(
+        'add_clientes.html',
+        estatus_clientes=estatus_clientes
+    )
+
+@cte_bp.route('/subir_cliente', methods=['POST'])
+@loguin_requerid
+def subir_cliente():
+    nombre = request.form.get('nombre')
+    apellidos = request.form.get('apellidos')
+    curp = request.form.get('curp')
+    nss = request.form.get('nss')
+    id_estatus = request.form.get('estatus')
+
+    cte_service.create_client(
+        cte_nombre=nombre,
+        cte_apellidos = apellidos,
+        cte_curp=curp,
+        cte_nss = nss,
+        ec_id=id_estatus
+    )
+
+    return redirect('/inicio')

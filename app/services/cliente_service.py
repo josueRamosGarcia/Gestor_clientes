@@ -14,3 +14,9 @@ class ClienteService:
         
     def search_by_name(self, busqueda):
         return self.cte_repo.search_by_name(busqueda)
+    
+    def create_client(self, **kwargs):
+        return self.cte_repo.create(**kwargs)
+    
+    def get_status(self):
+        return self.cte_repo.get_estatus()

@@ -27,7 +27,7 @@ def login():
     session['usr_id'] = user.usr_id
     session['ses_ip'] = get_client_ip()
 
-    return render_template('inicio.html', nombre_usuario=user.usr_username)
+    return redirect('/inicio')
 
 @auth_bp.route('/inicio')
 @loguin_requerid
