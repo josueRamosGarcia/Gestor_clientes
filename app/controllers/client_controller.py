@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, redirect
 from ..services.auth_service import AuthService
 from ..services.cliente_service import ClienteService
 from ..utils.decorators import loguin_requerid
+from ..utils.helpers import filtrar_datos
 
 cte_bp = Blueprint('cte_bp', __name__)
 
@@ -49,6 +50,26 @@ def agregar_cliente():
 @cte_bp.route('/subir_cliente', methods=['POST'])
 @loguin_requerid
 def subir_cliente():
+    # Insertar datos correo
+    correo = request.form.get('corr_nombre')
+
+    if correo:
+        contraseña = request.form.get('corr_contraseña')
+        localizacion = request.form.get('corr_localizacion')
+
+        datos_correo = {
+            'corr_nombre' : correo,
+            'corr_contraseña' : contraseña,
+            'corr_localizacion' : localizacion
+        }
+
+        corr_datos_fil = filtrar_datos(datos_correo)
+        cte_service.create_correo(**corr_datos_fil)
+        id_correo = cte_service.get_corr_id(correo)[0]
+    else:
+        id_correo = None
+
+    # Insertar datos cliente
     nombre = request.form.get('nombre')
     apellidos = request.form.get('apellidos')
     curp = request.form.get('curp')
@@ -62,13 +83,14 @@ def subir_cliente():
         'cte_curp': curp,
         'cte_nss' : nss,
         'cte_rfc' : rfc,
-        'ec_id': id_estatus
+        'ec_id': id_estatus,
+        'corr_id' : id_correo
     }
 
-    datos_filtrados = {k: v for k, v in datos_cliente.items() if v}
-
-    cte_service.create_client(**datos_filtrados)
+    cte_datos_fil = filtrar_datos(datos_cliente)
+    cte_service.create_client(**cte_datos_fil)
 
     id = cte_service.get_client_id(curp)[0]
+    
     
     return redirect(f'/cliente/{id}')

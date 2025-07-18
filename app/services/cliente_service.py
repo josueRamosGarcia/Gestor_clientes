@@ -23,3 +23,9 @@ class ClienteService:
 
     def get_client_id(self, curp):
         return self.cte_repo.get_client_id(curp)
+    
+    def create_correo(self, **kwargs):
+        return self.cte_repo.create_correo(**kwargs)
+    
+    def get_corr_id(self, nombre):
+        return self.cte_repo.get_corr_id(nombre)
