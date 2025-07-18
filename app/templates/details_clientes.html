@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de clientes - Detalles del Cliente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes.css') }}">
+</head>
+
+<body>
+  <div class="container-fluid py-4">
+    <!-- Header con navegación -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card header-card">
+          <div class="card-body">
+            <div class="header-info">
+              <div class="d-flex align-items-center">
+                <a href="/inicio" class="btn btn-back me-3">
+                  <i class="fas fa-arrow-left me-2"></i>
+                  Volver al inicio
+                </a>
+                <div>
+                  <h2 class="page-title">Detalles del Cliente</h2>
+                  <small class="text-muted">Información completa del cliente</small>
+                </div>
+              </div>
+              <div>
+                <button id="btn-edit" class="btn btn-edit">
+                  <i class="fas fa-edit me-2"></i>
+                  Editar Cliente
+                </button>
+                <button id="btn-save" class="btn btn-save d-none">
+                  <i class="fas fa-save me-2"></i>
+                  Guardar Cambios
+                </button>
+                <button id="btn-cancel" class="btn btn-cancel d-none ms-2">
+                  <i class="fas fa-times me-2"></i>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card main-card">
+          <div class="card-body p-4">
+            <form id="cliente-form" method="POST" action="/actualizar_cliente/{{ cliente.cte_id }}" enctype="multipart/form-data">
+              <input type="hidden" name="cte_id" value="{{ cliente.cte_id }}">
+
+              <!-- Información básica -->
+              <div class="client-info-section">
+                <h3 class="mb-4">
+                  <i class="fas fa-user text-primary me-2"></i>
+                  Información Personal
+                </h3>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="nombre">Nombre <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente.cte_nombre }}" disabled required>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="apellidos">Apellidos <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="apellidos" name="apellidos" value="{{ cliente.cte_apellidos }}" disabled required>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="curp">CURP <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="curp" name="curp" value="{{ cliente.cte_curp }}" maxlength="18" disabled required>
+                      <small class="text-muted">18 caracteres</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="nss">NSS <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="nss" name="nss" value="{{ cliente.cte_nss }}" maxlength="11" disabled required>
+                      <small class="text-muted">11 dígitos</small>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="rfc">RFC</label>
+                      <input type="text" class="form-control" id="rfc" name="rfc" value="{{ cliente.cte_rfc if cliente.cte_rfc else '' }}" maxlength="13" disabled>
+                      <small class="text-muted">13 caracteres</small>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="estatus">Estatus <span class="text-danger">*</span></label>
+                      <select class="form-control" id="estatus" name="estatus" disabled required>
+                        <option value="">Seleccione...</option>
+                        {% for estatus in estatus_clientes %}
+                        <option value="{{ estatus.ec_id }}" {% if cliente.ec_id == estatus.ec_id %}selected{% endif %}>{{ estatus.ec_nombre }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección de correo -->
+              <div class="client-info-section mt-4">
+                <h3 class="mb-4">
+                  <i class="fas fa-envelope text-primary me-2"></i>
+                  Correo Electrónico
+                </h3>
+                
+                <div id="correo-container">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="correo-email">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="correo-email" name="correo_email" 
+                               value="{{ cliente.correo.corr_nombre if cliente.correo else '' }}" disabled>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="correo-password">Contraseña</label>
+                        <input type="password" class="form-control" id="correo-password" name="correo_password" 
+                               value="{{ cliente.correo.corr_contraseña if cliente.correo else '' }}" disabled>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="correo-localizacion">Localización</label>
+                        <input type="text" class="form-control" id="correo-localizacion" name="correo_localizacion" 
+                               value="{{ cliente.correo.corr_localizacion if cliente.correo else '' }}" disabled>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección de teléfonos -->
+              <div class="client-info-section mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="mb-0">
+                    <i class="fas fa-phone text-primary me-2"></i>
+                    Teléfonos
+                  </h3>
+                  <button type="button" class="btn btn-add" id="btn-add-telefono" data-bs-toggle="modal" data-bs-target="#telefonoModal" disabled>
+                    <i class="fas fa-plus me-2"></i>
+                    Agregar Teléfono
+                  </button>
+                </div>
+                
+                <div id="telefonos-container">
+                  {% if cliente.telefonos and cliente.telefonos|length > 0 %}
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Número</th>
+                            <th>Nombre</th>
+                            <th>Parentesco</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for telefono in cliente.telefonos %}
+                          <tr id="telefono-{{ telefono.tel_id }}">
+                            <td>{{ telefono.tel_telefono }}</td>
+                            <td>{{ telefono.tel_nombre }}</td>
+                            <td>{{ telefono.tel_parentesco }}</td>
+                            <td>
+                              <button type="button" class="btn btn-edit-small btn-edit-telefono" data-id="{{ telefono.tel_id }}" disabled>
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button type="button" class="btn btn-cancel-small btn-delete-telefono" data-id="{{ telefono.tel_id }}" disabled>
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <div class="alert alert-info">
+                      No se han registrado teléfonos para este cliente.
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Sección de archivos -->
+              <div class="client-info-section mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="mb-0">
+                    <i class="fas fa-file-upload text-primary me-2"></i>
+                    Documentos
+                  </h3>
+                  <button type="button" class="btn btn-add" id="btn-add-archivo" data-bs-toggle="modal" data-bs-target="#archivoModal" disabled>
+                    <i class="fas fa-plus me-2"></i>
+                    Subir Documento
+                  </button>
+                </div>
+                
+                <div id="archivos-container">
+                  {% if cliente.archivos and cliente.archivos|length > 0 %}
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Fecha de Subida</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for archivo in cliente.archivos %}
+                          <tr id="archivo-{{ archivo.arch_id }}">
+                            <td>{{ archivo.tipo_archivo.ta_nombre }}</td>
+                            <td>{{ archivo.arch_nombre }}</td>
+                            <td>{{ archivo.arch_f_subida.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                              <a href="{{ archivo.arch_url }}" class="btn btn-edit-small" target="_blank">
+                                <i class="fas fa-eye"></i>
+                              </a>
+                              <button type="button" class="btn btn-cancel-small btn-delete-archivo" data-id="{{ archivo.arch_id }}" disabled>
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <div class="alert alert-info">
+                      No se han subido documentos para este cliente.
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Sección de préstamos -->
+              <div class="client-info-section mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="mb-0">
+                    <i class="fas fa-money-bill-wave text-primary me-2"></i>
+                    Préstamos
+                  </h3>
+                  <button type="button" class="btn btn-add" id="btn-add-prestamo" data-bs-toggle="modal" data-bs-target="#prestamoModal" disabled>
+                    <i class="fas fa-plus me-2"></i>
+                    Agregar Préstamo
+                  </button>
+                </div>
+                
+                <div id="prestamos-container">
+                  {% if cliente.prestamos and cliente.prestamos|length > 0 %}
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Financiera</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                            <th>Estatus</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for prestamo in cliente.prestamos %}
+                          <tr id="prestamo-{{ prestamo.prst_id }}">
+                            <td>{{ prestamo.prst_financiera }}</td>
+                            <td>{{ prestamo.tipo_prestamo.tp_nombre }}</td>
+                            <td>${{ "{:,.2f}".format(prestamo.prst_monto) }}</td>
+                            <td>
+                              <span class="badge {% if prestamo.estatus_prestamo.ep_nombre == 'Activo' %}badge-active{% else %}badge-inactive{% endif %}">
+                                {{ prestamo.estatus_prestamo.ep_nombre }}
+                              </span>
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-edit-small btn-edit-prestamo" data-id="{{ prestamo.prst_id }}" disabled>
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button type="button" class="btn btn-cancel-small btn-delete-prestamo" data-id="{{ prestamo.prst_id }}" disabled>
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <div class="alert alert-info">
+                      No se han registrado préstamos para este cliente.
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar teléfono -->
+  <div class="modal fade" id="telefonoModal" tabindex="-1" aria-labelledby="telefonoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="telefonoModalLabel">Agregar Teléfono</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="telefono-form">
+            <input type="hidden" id="telefono-id">
+            <div class="form-group mb-3">
+              <label for="telefono-numero">Número de Teléfono <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" id="telefono-numero" maxlength="10" required>
+              <small class="text-muted">10 dígitos</small>
+            </div>
+            <div class="form-group mb-3">
+              <label for="telefono-nombre">Nombre <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="telefono-nombre" required>
+              <small class="text-muted">Ej: Casa, Oficina, Móvil</small>
+            </div>
+            <div class="form-group mb-3">
+              <label for="telefono-parentesco">Parentesco <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="telefono-parentesco" required>
+              <small class="text-muted">Ej: Propio, Conyuge, Hijo</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-save" id="guardar-telefono">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para subir archivo -->
+  <div class="modal fade" id="archivoModal" tabindex="-1" aria-labelledby="archivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="archivoModalLabel">Subir Documento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="archivo-form">
+            <input type="hidden" id="archivo-id">
+            <div class="form-group mb-3">
+              <label for="archivo-tipo">Tipo de Documento <span class="text-danger">*</span></label>
+              <select class="form-control" id="archivo-tipo" required>
+                <option value="">Seleccione...</option>
+                {% for tipo in tipos_archivos %}
+                <option value="{{ tipo.ta_id }}">{{ tipo.ta_nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="archivo-nombre">Nombre del Documento <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="archivo-nombre" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="archivo-file">Archivo <span class="text-danger">*</span></label>
+              <input type="file" class="form-control" id="archivo-file" required>
+              <small class="text-muted">Formatos permitidos: PDF, JPG, PNG</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-save" id="guardar-archivo">Subir Documento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar/editar préstamo -->
+  <div class="modal fade" id="prestamoModal" tabindex="-1" aria-labelledby="prestamoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="prestamoModalLabel">Agregar Préstamo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="prestamo-form">
+            <input type="hidden" id="prestamo-id">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-financiera">Financiera <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="prestamo-financiera" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-tipo">Tipo de Préstamo <span class="text-danger">*</span></label>
+                  <select class="form-control" id="prestamo-tipo" required>
+                    <option value="">Seleccione...</option>
+                    {% for tipo in tipos_prestamos %}
+                    <option value="{{ tipo.tp_id }}">{{ tipo.tp_nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-cat">CAT (%) <span class="text-danger">*</span></label>
+                  <input type="number" step="0.01" class="form-control" id="prestamo-cat" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-monto">Monto <span class="text-danger">*</span></label>
+                  <input type="number" step="0.01" class="form-control" id="prestamo-monto" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-descuento">Descuento <span class="text-danger">*</span></label>
+                  <input type="number" step="0.01" class="form-control" id="prestamo-descuento" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-plazo">Plazo (meses) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" id="prestamo-plazo" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-importe">Importe a Pagar <span class="text-danger">*</span></label>
+                  <input type="number" step="0.01" class="form-control" id="prestamo-importe" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-fecha">Fecha 1er Descuento <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="prestamo-fecha" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-estatus">Estatus <span class="text-danger">*</span></label>
+                  <select class="form-control" id="prestamo-estatus" required>
+                    <option value="">Seleccione...</option>
+                    {% for estatus in estatus_prestamos %}
+                    <option value="{{ estatus.ep_id }}">{{ estatus.ep_nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="prestamo-liquida">Liquida otro préstamo</label>
+                  <select class="form-control" id="prestamo-liquida">
+                    <option value="">No aplica</option>
+                    {% for p in cliente.prestamos %}
+                    <option value="{{ p.prst_id }}">{{ p.prst_financiera }} - ${{ "{:,.2f}".format(p.prst_monto) }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-save" id="guardar-prestamo">Guardar Préstamo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Variables de estado
+      let editMode = false;
+      let currentTelefonoId = null;
+      let currentArchivoId = null;
+      let currentPrestamoId = null;
+
+      // Elementos del DOM
+      const btnEdit = document.getElementById('btn-edit');
+      const btnSave = document.getElementById('btn-save');
+      const btnCancel = document.getElementById('btn-cancel');
+      const form = document.getElementById('cliente-form');
+      const inputs = form.querySelectorAll('input, select, textarea');
+      const btnAddTelefono = document.getElementById('btn-add-telefono');
+      const btnAddArchivo = document.getElementById('btn-add-archivo');
+      const btnAddPrestamo = document.getElementById('btn-add-prestamo');
+      const btnEditTelefonos = document.querySelectorAll('.btn-edit-telefono');
+      const btnDeleteTelefonos = document.querySelectorAll('.btn-delete-telefono');
+      const btnDeleteArchivos = document.querySelectorAll('.btn-delete-archivo');
+      const btnEditPrestamos = document.querySelectorAll('.btn-edit-prestamo');
+      const btnDeletePrestamos = document.querySelectorAll('.btn-delete-prestamo');
+
+      // Modal de teléfono
+      const telefonoModal = new bootstrap.Modal(document.getElementById('telefonoModal'));
+      const telefonoForm = document.getElementById('telefono-form');
+      const guardarTelefonoBtn = document.getElementById('guardar-telefono');
+
+      // Modal de archivo
+      const archivoModal = new bootstrap.Modal(document.getElementById('archivoModal'));
+      const archivoForm = document.getElementById('archivo-form');
+      const guardarArchivoBtn = document.getElementById('guardar-archivo');
+
+      // Modal de préstamo
+      const prestamoModal = new bootstrap.Modal(document.getElementById('prestamoModal'));
+      const prestamoForm = document.getElementById('prestamo-form');
+      const guardarPrestamoBtn = document.getElementById('guardar-prestamo');
+
+      // Habilitar/deshabilitar edición
+      btnEdit.addEventListener('click', function() {
+        editMode = true;
+        btnEdit.classList.add('d-none');
+        btnSave.classList.remove('d-none');
+        btnCancel.classList.remove('d-none');
+        
+        // Habilitar inputs del formulario principal
+        inputs.forEach(input => {
+          input.disabled = false;
+        });
+        
+        // Habilitar botones de agregar
+        btnAddTelefono.disabled = false;
+        btnAddArchivo.disabled = false;
+        btnAddPrestamo.disabled = false;
+        
+        // Habilitar botones de edición/eliminación
+        btnEditTelefonos.forEach(btn => {
+          btn.disabled = false;
+        });
+        btnDeleteTelefonos.forEach(btn => {
+          btn.disabled = false;
+        });
+        btnDeleteArchivos.forEach(btn => {
+          btn.disabled = false;
+        });
+        btnEditPrestamos.forEach(btn => {
+          btn.disabled = false;
+        });
+        btnDeletePrestamos.forEach(btn => {
+          btn.disabled = false;
+        });
+      });
+
+      // Cancelar edición
+      btnCancel.addEventListener('click', function() {
+        editMode = false;
+        btnEdit.classList.remove('d-none');
+        btnSave.classList.add('d-none');
+        btnCancel.classList.add('d-none');
+        
+        // Deshabilitar inputs del formulario principal
+        inputs.forEach(input => {
+          input.disabled = true;
+        });
+        
+        // Deshabilitar botones de agregar
+        btnAddTelefono.disabled = true;
+        btnAddArchivo.disabled = true;
+        btnAddPrestamo.disabled = true;
+        
+        // Deshabilitar botones de edición/eliminación
+        btnEditTelefonos.forEach(btn => {
+          btn.disabled = true;
+        });
+        btnDeleteTelefonos.forEach(btn => {
+          btn.disabled = true;
+        });
+        btnDeleteArchivos.forEach(btn => {
+          btn.disabled = true;
+        });
+        btnEditPrestamos.forEach(btn => {
+          btn.disabled = true;
+        });
+        btnDeletePrestamos.forEach(btn => {
+          btn.disabled = true;
+        });
+        
+        // Recargar la página para descartar cambios
+        location.reload();
+      });
+
+      // Guardar cambios del formulario principal
+      btnSave.addEventListener('click', function() {
+        form.submit();
+      });
+
+      // Eventos para teléfonos
+      btnAddTelefono.addEventListener('click', function() {
+        currentTelefonoId = null;
+        telefonoForm.reset();
+        document.getElementById('telefonoModalLabel').textContent = 'Agregar Teléfono';
+        telefonoModal.show();
+      });
+
+      // Eventos para editar teléfono
+      document.querySelectorAll('.btn-edit-telefono').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const telefonoId = this.getAttribute('data-id');
+          // Aquí deberías hacer una petición AJAX para obtener los datos del teléfono
+          // y llenar el formulario del modal
+          // Por ahora, solo simulamos que estamos en modo edición
+          currentTelefonoId = telefonoId;
+          document.getElementById('telefonoModalLabel').textContent = 'Editar Teléfono';
+          telefonoModal.show();
+        });
+      });
+
+      // Eventos para eliminar teléfono
+      document.querySelectorAll('.btn-delete-telefono').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const telefonoId = this.getAttribute('data-id');
+          if (confirm('¿Estás seguro de que deseas eliminar este teléfono?')) {
+            // Aquí deberías hacer una petición AJAX para eliminar el teléfono
+            // y luego actualizar la tabla
+            fetch(`/eliminar_telefono/${telefonoId}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                document.getElementById(`telefono-${telefonoId}`).remove();
+              }
+            });
+          }
+        });
+      });
+
+      // Guardar teléfono
+      guardarTelefonoBtn.addEventListener('click', function() {
+        if (telefonoForm.checkValidity()) {
+          const telefonoData = {
+            numero: document.getElementById('telefono-numero').value,
+            nombre: document.getElementById('telefono-nombre').value,
+            parentesco: document.getElementById('telefono-parentesco').value
+          };
+
+          // Determinar la URL y método según si es nuevo o edición
+          const url = currentTelefonoId ? 
+            `/actualizar_telefono/${currentTelefonoId}` : 
+            `/agregar_telefono/{{ cliente.cte_id }}`;
+          const method = currentTelefonoId ? 'PUT' : 'POST';
+
+          // Aquí deberías hacer una petición AJAX para guardar el teléfono
+          fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(telefonoData)
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              telefonoModal.hide();
+              location.reload(); // Recargar para ver los cambios
+            }
+          });
+        } else {
+          telefonoForm.reportValidity();
+        }
+      });
+
+      // Eventos para archivos (similar a teléfonos)
+      btnAddArchivo.addEventListener('click', function() {
+        currentArchivoId = null;
+        archivoForm.reset();
+        document.getElementById('archivoModalLabel').textContent = 'Subir Documento';
+        archivoModal.show();
+      });
+
+      // Eventos para eliminar archivo
+      document.querySelectorAll('.btn-delete-archivo').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const archivoId = this.getAttribute('data-id');
+          if (confirm('¿Estás seguro de que deseas eliminar este documento?')) {
+            // Petición AJAX para eliminar el archivo
+            fetch(`/eliminar_archivo/${archivoId}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                document.getElementById(`archivo-${archivoId}`).remove();
+              }
+            });
+          }
+        });
+      });
+
+      // Guardar archivo
+      guardarArchivoBtn.addEventListener('click', function() {
+        if (archivoForm.checkValidity()) {
+          const formData = new FormData();
+          formData.append('tipo', document.getElementById('archivo-tipo').value);
+          formData.append('nombre', document.getElementById('archivo-nombre').value);
+          formData.append('archivo', document.getElementById('archivo-file').files[0]);
+
+          // Petición AJAX para subir el archivo
+          fetch(`/subir_archivo/{{ cliente.cte_id }}`, {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              archivoModal.hide();
+              location.reload(); // Recargar para ver los cambios
+            }
+          });
+        } else {
+          archivoForm.reportValidity();
+        }
+      });
+
+      // Eventos para préstamos (similar a teléfonos)
+      btnAddPrestamo.addEventListener('click', function() {
+        currentPrestamoId = null;
+        prestamoForm.reset();
+        document.getElementById('prestamoModalLabel').textContent = 'Agregar Préstamo';
+        prestamoModal.show();
+      });
+
+      // Eventos para editar préstamo
+      document.querySelectorAll('.btn-edit-prestamo').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const prestamoId = this.getAttribute('data-id');
+          // Aquí deberías hacer una petición AJAX para obtener los datos del préstamo
+          // y llenar el formulario del modal
+          // Por ahora, solo simulamos que estamos en modo edición
+          currentPrestamoId = prestamoId;
+          document.getElementById('prestamoModalLabel').textContent = 'Editar Préstamo';
+          prestamoModal.show();
+        });
+      });
+
+      // Eventos para eliminar préstamo
+      document.querySelectorAll('.btn-delete-prestamo').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const prestamoId = this.getAttribute('data-id');
+          if (confirm('¿Estás seguro de que deseas eliminar este préstamo?')) {
+            // Petición AJAX para eliminar el préstamo
+            fetch(`/eliminar_prestamo/${prestamoId}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                document.getElementById(`prestamo-${prestamoId}`).remove();
+              }
+            });
+          }
+        });
+      });
+
+      // Guardar préstamo
+      guardarPrestamoBtn.addEventListener('click', function() {
+        if (prestamoForm.checkValidity()) {
+          const prestamoData = {
+            financiera: document.getElementById('prestamo-financiera').value,
+            tipo: document.getElementById('prestamo-tipo').value,
+            cat: document.getElementById('prestamo-cat').value,
+            monto: document.getElementById('prestamo-monto').value,
+            descuento: document.getElementById('prestamo-descuento').value,
+            plazo: document.getElementById('prestamo-plazo').value,
+            importe: document.getElementById('prestamo-importe').value,
+            fecha: document.getElementById('prestamo-fecha').value,
+            estatus: document.getElementById('prestamo-estatus').value,
+            liquida: document.getElementById('prestamo-liquida').value
+          };
+
+          // Determinar la URL y método según si es nuevo o edición
+          const url = currentPrestamoId ? 
+            `/actualizar_prestamo/${currentPrestamoId}` : 
+            `/agregar_prestamo/{{ cliente.cte_id }}`;
+          const method = currentPrestamoId ? 'PUT' : 'POST';
+
+          // Petición AJAX para guardar el préstamo
+          fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(prestamoData)
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              prestamoModal.hide();
+              location.reload(); // Recargar para ver los cambios
+            }
+          });
+        } else {
+          prestamoForm.reportValidity();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

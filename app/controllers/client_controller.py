@@ -31,7 +31,7 @@ def detalle_cliente(cte_id):
     cliente, prestamos = cte_service.get_client_and_credits(cte_id)
 
     return render_template(
-        'clientes.html',
+        'details_clientes.html',
         cliente=cliente,
         prestamos=prestamos
     )
@@ -53,14 +53,22 @@ def subir_cliente():
     apellidos = request.form.get('apellidos')
     curp = request.form.get('curp')
     nss = request.form.get('nss')
+    rfc = request.form.get('rfc')
     id_estatus = request.form.get('estatus')
 
-    cte_service.create_client(
-        cte_nombre=nombre,
-        cte_apellidos = apellidos,
-        cte_curp=curp,
-        cte_nss = nss,
-        ec_id=id_estatus
-    )
+    datos_cliente = {
+        'cte_nombre': nombre,
+        'cte_apellidos' : apellidos,
+        'cte_curp': curp,
+        'cte_nss' : nss,
+        'cte_rfc' : rfc,
+        'ec_id': id_estatus
+    }
 
-    return redirect('/inicio')
+    datos_filtrados = {k: v for k, v in datos_cliente.items() if v}
+
+    cte_service.create_client(**datos_filtrados)
+
+    id = cte_service.get_client_id(curp)[0]
+    
+    return redirect(f'/cliente/{id}')

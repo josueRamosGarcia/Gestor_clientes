@@ -20,3 +20,6 @@ class ClienteService:
     
     def get_status(self):
         return self.cte_repo.get_estatus()
+
+    def get_client_id(self, curp):
+        return self.cte_repo.get_client_id(curp)

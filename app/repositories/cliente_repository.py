@@ -17,3 +17,7 @@ class ClienteRepository(BaseRepository):
     def get_estatus(self):
         return self.db.session.query(EstatusCliente).all()
     
+    def get_client_id(self, curp):
+        return self.db.session.query(Cliente.cte_id).filter_by(
+            cte_curp = curp
+        ).first()
