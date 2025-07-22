@@ -1,13 +1,18 @@
 from flask import Blueprint, request, render_template, redirect
 from ..services.auth_service import AuthService
 from ..services.cliente_service import ClienteService
+from ..services.archivos_service import ArchivoServices
 from ..utils.decorators import loguin_requerid
 from ..utils.helpers import filtrar_datos
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 
 cte_bp = Blueprint('cte_bp', __name__)
 
 auth_service = AuthService()
 cte_service = ClienteService()
+arch_service = ArchivoServices()
 
 @cte_bp.route('/buscar_clientes', methods=['POST'])
 @loguin_requerid
@@ -30,21 +35,25 @@ def buscar_clientes():
 @loguin_requerid
 def detalle_cliente(cte_id):
     cliente, prestamos = cte_service.get_client_and_credits(cte_id)
+    estatus = cte_service.get_status()
 
     return render_template(
         'details_clientes.html',
         cliente=cliente,
-        prestamos=prestamos
+        prestamos=prestamos,
+        estatus_clientes=estatus
     )
 
 @cte_bp.route('/agregar_cliente')
 @loguin_requerid
 def agregar_cliente():
     estatus_clientes = cte_service.get_status()
+    tiposarchivos = arch_service.get_file_types()
 
     return render_template(
         'add_clientes.html',
-        estatus_clientes=estatus_clientes
+        estatus_clientes=estatus_clientes,
+        tipos_archivos = tiposarchivos
     )
 
 @cte_bp.route('/subir_cliente', methods=['POST'])
@@ -91,6 +100,50 @@ def subir_cliente():
     cte_service.create_client(**cte_datos_fil)
 
     id = cte_service.get_client_id(curp)[0]
-    
-    
+
+    # CORRECCIÓN AQUÍ: Manejo correcto de archivos múltiples
+    if 'archivos' in request.files:
+        files = request.files.getlist('archivos')
+        print(f"Número de archivos: {len(files)}")
+        
+        for index, file in enumerate(files):
+            print(f"Procesando archivo {index}: {file.filename}")
+            
+            if file.filename != '':
+                # Obtener metadatos del archivo usando el índice
+                ta_id_key = f'archivos_info[{index}][ta_id]'
+                arch_nombre_key = f'archivos_info[{index}][arch_nombre]'
+                
+                ta_id = request.form.get(ta_id_key)
+                arch_nombre = request.form.get(arch_nombre_key)
+                
+                print(f"Metadatos archivo {index}: ta_id={ta_id}, nombre={arch_nombre}")
+                
+                if ta_id and arch_nombre:
+                    try:
+                        upload_result = cloudinary.uploader.upload(
+                            file,
+                            folder=f"clientes/{id}/",
+                            resource_type="auto"  # Permite cualquier tipo de archivo
+                        )
+                        
+                        print(f"Archivo subido exitosamente: {upload_result['secure_url']}")
+                        
+                        # Aquí deberías guardar en tu base de datos
+                        # datos_archivo = {
+                        #     'cte_id': id,
+                        #     'ta_id': ta_id,
+                        #     'arch_nombre': arch_nombre,
+                        #     'arch_url': upload_result['secure_url'],
+                        #     'arch_f_subida': datetime.now()
+                        # }
+                        # cte_service.create_archivo(**datos_archivo)
+                        
+                    except Exception as upload_error:
+                        print(f"Error subiendo archivo {index}: {str(upload_error)}")
+                else:
+                    print(f"Faltan metadatos para archivo {index}")
+            else:
+                print(f"Archivo {index} está vacío")
+
     return redirect(f'/cliente/{id}')

@@ -7,6 +7,7 @@ class AuthService:
         self.usr_repo = UsuarioRepository()
 
     def get_logged_user(self):
+        
         user_id = get_usr_id_log()
 
         if user_id:
