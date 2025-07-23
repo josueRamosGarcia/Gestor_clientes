@@ -7,3 +7,5 @@ class ArchivoServices():
     def get_file_types(self):
         return self.arch_repo.get_file_types()
         
+    def create_archivo(self, **kwargs):
+        return self.arch_repo.create(**kwargs)

@@ -9,4 +9,4 @@ class ArchivoRepository(BaseRepository):
 
     def get_file_types(self):
         return self.db.session.query(TipoArchivo).all()
-
+    

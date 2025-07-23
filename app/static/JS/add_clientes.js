@@ -25,6 +25,51 @@ document.getElementById('agregar-telefono').addEventListener('click', function (
   bootstrap.Modal.getInstance(document.getElementById('telefonoModal')).hide();
 });
 
+// Función para actualizar la lista de teléfonos en la UI
+function actualizarListaTelefonos() {
+  const container = document.getElementById('telefonos-container');
+
+  if (telefonos.length === 0) {
+    container.innerHTML = '<div class="alert alert-info">No se han agregado teléfonos aún.</div>';
+    return;
+  }
+
+  let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Número</th><th>Nombre</th><th>Parentesco</th><th>Acciones</th></tr></thead><tbody>';
+
+  telefonos.forEach((telefono, index) => {
+    html += `
+        <tr>
+        <td>${telefono.numero}</td>
+        <td>${telefono.nombre}</td>
+        <td>${telefono.parentesco}</td>
+        <td>
+            <button class="btn btn-edit-small" onclick="editarTelefono(${index})">
+            <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-cancel-small" onclick="eliminarTelefono(${index})">
+            <i class="fas fa-trash"></i>
+            </button>
+        </td>
+        </tr>
+    `;
+  });
+
+  html += '</tbody></table></div>';
+
+  // Agregar campos ocultos para cada teléfono
+  telefonos.forEach((telefono, index) => {
+    html += `
+        <input type="hidden" name="telefonos[${index}][tel_telefono]" value="${telefono.numero}">
+        <input type="hidden" name="telefonos[${index}][tel_nombre]" value="${telefono.nombre}">
+        <input type="hidden" name="telefonos[${index}][tel_parentesco]" value="${telefono.parentesco}">
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+
+
 // Función para subir archivo
 // Cambiaremos la lógica para usar el input multiple oculto y asociar metadatos
 
@@ -107,49 +152,6 @@ document.getElementById('agregar-prestamo').addEventListener('click', function (
   bootstrap.Modal.getInstance(document.getElementById('prestamoModal')).hide();
 });
 
-// Función para actualizar la lista de teléfonos en la UI
-function actualizarListaTelefonos() {
-  const container = document.getElementById('telefonos-container');
-
-  if (telefonos.length === 0) {
-    container.innerHTML = '<div class="alert alert-info">No se han agregado teléfonos aún.</div>';
-    return;
-  }
-
-  let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Número</th><th>Nombre</th><th>Parentesco</th><th>Acciones</th></tr></thead><tbody>';
-
-  telefonos.forEach((telefono, index) => {
-    html += `
-        <tr>
-        <td>${telefono.numero}</td>
-        <td>${telefono.nombre}</td>
-        <td>${telefono.parentesco}</td>
-        <td>
-            <button class="btn btn-edit-small" onclick="editarTelefono(${index})">
-            <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-cancel-small" onclick="eliminarTelefono(${index})">
-            <i class="fas fa-trash"></i>
-            </button>
-        </td>
-        </tr>
-    `;
-  });
-
-  html += '</tbody></table></div>';
-
-  // Agregar campos ocultos para cada teléfono
-  telefonos.forEach((telefono, index) => {
-    html += `
-        <input type="hidden" name="telefonos[${index}][tel_telefono]" value="${telefono.numero}">
-        <input type="hidden" name="telefonos[${index}][tel_nombre]" value="${telefono.nombre}">
-        <input type="hidden" name="telefonos[${index}][tel_parentesco]" value="${telefono.parentesco}">
-    `;
-  });
-
-  container.innerHTML = html;
-}
-
 // Función para actualizar la lista de archivos
 function actualizarListaArchivos() {
   const container = document.getElementById('archivos-container');
@@ -182,30 +184,6 @@ function actualizarListaArchivos() {
   container.innerHTML = html;
 }
 
-// Eliminar archivo
-function eliminarArchivo(index) {
-  const multiInput = document.getElementById('archivos-multifile');
-  const metadatosDiv = document.getElementById('archivos-metadatos');
-  // Eliminar archivo del input multiple
-  const dt = new DataTransfer();
-  for (let i = 0; i < multiInput.files.length; i++) {
-    if (i !== index) {
-      dt.items.add(multiInput.files[i]);
-    }
-  }
-  multiInput.files = dt.files;
-  // Eliminar metadatos
-  const taInput = document.querySelector(`input[name='archivos_info[${index}][ta_id]']`);
-  const nombreInput = document.querySelector(`input[name='archivos_info[${index}][arch_nombre]']`);
-  if (taInput) taInput.remove();
-  if (nombreInput) nombreInput.remove();
-  // Reindexar los campos ocultos
-  const allTa = metadatosDiv.querySelectorAll("input[name^='archivos_info'][name$='[ta_id]']");
-  const allNombre = metadatosDiv.querySelectorAll("input[name^='archivos_info'][name$='[arch_nombre]']");
-  allTa.forEach((input, i) => input.name = `archivos_info[${i}][ta_id]`);
-  allNombre.forEach((input, i) => input.name = `archivos_info[${i}][arch_nombre]`);
-  actualizarListaArchivos();
-}
 
 // Función para actualizar la lista de préstamos en la UI
 function actualizarListaPrestamos() {

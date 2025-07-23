@@ -101,14 +101,13 @@ def subir_cliente():
 
     id = cte_service.get_client_id(curp)[0]
 
-    # CORRECCIÓN AQUÍ: Manejo correcto de archivos múltiples
+
+    # Subir archivos
     if 'archivos' in request.files:
         files = request.files.getlist('archivos')
         print(f"Número de archivos: {len(files)}")
         
         for index, file in enumerate(files):
-            print(f"Procesando archivo {index}: {file.filename}")
-            
             if file.filename != '':
                 # Obtener metadatos del archivo usando el índice
                 ta_id_key = f'archivos_info[{index}][ta_id]'
@@ -117,30 +116,34 @@ def subir_cliente():
                 ta_id = request.form.get(ta_id_key)
                 arch_nombre = request.form.get(arch_nombre_key)
                 
-                print(f"Metadatos archivo {index}: ta_id={ta_id}, nombre={arch_nombre}")
-                
                 if ta_id and arch_nombre:
                     try:
                         upload_result = cloudinary.uploader.upload(
                             file,
                             folder=f"clientes/{id}/",
-                            resource_type="auto"  # Permite cualquier tipo de archivo
+                            public_id=arch_nombre,
+                            use_filename=True,
+                            unique_filename=False,
+                            resource_type="auto",
                         )
-                        
-                        print(f"Archivo subido exitosamente: {upload_result['secure_url']}")
-                        
-                        # Aquí deberías guardar en tu base de datos
-                        # datos_archivo = {
-                        #     'cte_id': id,
-                        #     'ta_id': ta_id,
-                        #     'arch_nombre': arch_nombre,
-                        #     'arch_url': upload_result['secure_url'],
-                        #     'arch_f_subida': datetime.now()
-                        # }
-                        # cte_service.create_archivo(**datos_archivo)
+
+                        # Optimize delivery by resizing and applying auto-format and auto-quality
+                        optimize_url, _ = cloudinary_url("shoes", fetch_format="auto", quality="auto")
+
+                        datos_archivo = {
+                            'arch_url': optimize_url,
+                            'arch_nombre':arch_nombre,
+                            'ta_id': ta_id,
+                            'cte_id': id
+                        }
+
+                        arch_datos_fil = filtrar_datos(datos_archivo)
+                        arch_service.create_archivo(**arch_datos_fil)
                         
                     except Exception as upload_error:
                         print(f"Error subiendo archivo {index}: {str(upload_error)}")
+                        import traceback
+                        traceback.print_exc()
                 else:
                     print(f"Faltan metadatos para archivo {index}")
             else:
