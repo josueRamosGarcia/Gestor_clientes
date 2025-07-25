@@ -324,3 +324,15 @@ function eliminarPrestamo(index) {
   }
 }
 
+function togglePassword() {
+  const passwordField = document.getElementById('correo-password');
+  const toggleIcon = document.querySelector('.password-toggle i');
+  
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    passwordField.type = 'password';
+    toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}

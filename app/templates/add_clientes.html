@@ -116,7 +116,12 @@
                     <div class="col-md-6">
                       <div class="form-group">
                         <label for="correo-password">Contraseña</label>
-                        <input type="password" class="form-control" id="correo-password" name="corr_contraseña">
+                        <div class="password-wrapper">
+                          <input type="password" class="form-control" id="correo-password" name="corr_contraseña">
+                          <span class="password-toggle" onclick="togglePassword()">
+                            <i class="fa fa-eye"></i>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

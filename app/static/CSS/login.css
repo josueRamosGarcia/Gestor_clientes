@@ -85,3 +85,20 @@ body {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
     color: white;
 }
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+}
+
+.password-toggle:hover {
+  color: #333;
+}

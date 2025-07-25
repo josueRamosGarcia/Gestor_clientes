@@ -56,8 +56,13 @@
                 <span class="input-group-text">
                   <i class="fas fa-lock"></i>
                 </span>
-                <input type="password" class="form-control" name="contraseña" id="contraseña" placeholder="Contraseña"
-                  required>
+                <div class="password-wrapper" style="position: relative; flex: 1 1 auto; width: 1%; min-width: 0;">
+                  <input type="password" class="form-control" name="contraseña" id="contraseña" placeholder="Contraseña" required>
+                  <span class="password-toggle" onclick="togglePassword('contraseña', this)" 
+                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                    <i class="fa fa-eye"></i>
+                  </span>
+                </div>
               </div>
 
               <!-- Botón de login -->
@@ -72,6 +77,20 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function togglePassword() {
+      const passwordField = document.getElementById('contraseña');
+      const toggleIcon = document.querySelector('.password-toggle i');
+      
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+  </script>
 </body>
 
 </html>

@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, curren
 from ..services.auth_service import AuthService
 from ..services.cliente_service import ClienteService
 from ..services.archivos_service import ArchivoServices
+from ..services.prest_service import PrestamoService
 from ..utils.decorators import loguin_requerid
 from ..utils.helpers import filtrar_datos
 
@@ -12,6 +13,7 @@ cte_bp = Blueprint('cte_bp', __name__)
 auth_service = AuthService()
 cte_service = ClienteService()
 arch_service = ArchivoServices()
+prst_service = PrestamoService()
 
 @cte_bp.route('/buscar_clientes', methods=['POST'])
 @loguin_requerid
@@ -48,11 +50,15 @@ def detalle_cliente(cte_id):
 def agregar_cliente():
     estatus_clientes = cte_service.get_status()
     tiposarchivos = arch_service.get_file_types()
-
+    tiposprestamos = prst_service.get_tipos()
+    estatusprestamos = prst_service.get_status()
+    
     return render_template(
         'add_clientes.html',
         estatus_clientes=estatus_clientes,
-        tipos_archivos = tiposarchivos
+        tipos_archivos = tiposarchivos,
+        tipos_prestamos = tiposprestamos,
+        estatus_prestamos = estatusprestamos
     )
 
 @cte_bp.route('/subir_cliente', methods=['POST'])
