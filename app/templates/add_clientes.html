@@ -327,13 +327,13 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-cat">CAT (%) <span class="text-danger">*</span></label>
-                  <input type="number" step="0.01" class="form-control" id="prestamo-cat" required>
+                  <input type="number" step="0.01" min="0" class="form-control" id="prestamo-cat" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-monto">Monto <span class="text-danger">*</span></label>
-                  <input type="number" step="0.01" class="form-control" id="prestamo-monto" required>
+                  <input type="number" step="0.01" min="0" class="form-control" id="prestamo-monto" required>
                 </div>
               </div>
             </div>
@@ -342,13 +342,13 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-descuento">Descuento <span class="text-danger">*</span></label>
-                  <input type="number" step="0.01" class="form-control" id="prestamo-descuento" required>
+                  <input type="number" step="0.01" min="0" class="form-control" id="prestamo-descuento" required>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-plazo">Plazo (meses) <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" id="prestamo-plazo" required>
+                  <input type="number" min="0" class="form-control" id="prestamo-plazo" required>
                 </div>
               </div>
             </div>
@@ -357,7 +357,7 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-importe">Importe a Pagar <span class="text-danger">*</span></label>
-                  <input type="number" step="0.01" class="form-control" id="prestamo-importe" required>
+                  <input type="number" step="0.01" min="0" class="form-control" id="prestamo-importe" required>
                 </div>
               </div>
               <div class="col-md-6">

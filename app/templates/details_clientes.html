@@ -230,7 +230,7 @@
                         <tbody>
                           {% for archivo in cliente.archivos %}
                           <tr id="archivo-{{ archivo.arch_id }}">
-                            <td>{{ archivo.tipo_archivo.ta_nombre }}</td>
+                            <td>{{ archivo.tipo.ta_nombre }}</td>
                             <td>{{ archivo.arch_nombre }}</td>
                             <td>{{ archivo.arch_f_subida.strftime('%d/%m/%Y') }}</td>
                             <td>
