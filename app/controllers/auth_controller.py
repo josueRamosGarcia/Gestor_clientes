@@ -14,6 +14,7 @@ def login_page():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
+        session.clear()
         return render_template('login.html')
 
     username = request.form.get('usuario')
