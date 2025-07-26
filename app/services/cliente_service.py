@@ -4,21 +4,20 @@ from .archivos_service import ArchivoServices
 from ..utils.helpers import filtrar_datos
 from flask import current_app
 
-
 class ClienteService:
     def __init__(self):
         self.cte_repo = ClienteRepository()
         self.prst_repo = PrestamoRepository()
         self.arch_service = ArchivoServices()
 
+    def __getattr__(self, name):
+        return getattr(self.cte_repo, name)
+    
     def get_client_and_credits(self, id):
         cliente = self.cte_repo.get_by_id(id)
         prestamos = self.prst_repo.get_by_cte_id(id)
 
         return cliente, prestamos
-    
-    def __getattr__(self, name):
-        return getattr(self.cte_repo, name)
 
     def procesar_correo(self, form):
         correo = form.get('corr_nombre')

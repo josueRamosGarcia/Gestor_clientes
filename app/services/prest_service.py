@@ -37,7 +37,7 @@ class PrestamoService:
             })
 
             try:
-                self.prst_repo.create(**datos)
+                self.create(**datos)
             except Exception as e:
                 current_app.logger.warning(f"Error creando prestamo {i}: {e}")
 
