@@ -5,7 +5,6 @@ from ..services.archivos_service import ArchivoServices
 from ..services.prest_service import PrestamoService
 from ..utils.decorators import loguin_requerid
 from ..utils.helpers import filtrar_datos
-
 from cloudinary.utils import cloudinary_url
 
 cte_bp = Blueprint('cte_bp', __name__)
@@ -18,7 +17,6 @@ prst_service = PrestamoService()
 @cte_bp.route('/buscar_clientes', methods=['POST'])
 @loguin_requerid
 def buscar_clientes():
-
     busqueda = request.form.get('busqueda','').strip()
     user = auth_service.get_logged_user()   
 
@@ -27,38 +25,32 @@ def buscar_clientes():
 
         return render_template(
             'inicio.html',
-            nombre_usuario=user.usr_username,
-            clientes=clientes,
-            busqueda=busqueda
+            nombre_usuario = user.usr_username,
+            clientes = clientes,
+            busqueda = busqueda
         )
 
 @cte_bp.route('/cliente/<int:cte_id>')
 @loguin_requerid
 def detalle_cliente(cte_id):
     cliente, prestamos = cte_service.get_client_and_credits(cte_id)
-    estatus = cte_service.get_status()
 
     return render_template(
         'details_clientes.html',
-        cliente=cliente,
-        prestamos=prestamos,
-        estatus_clientes=estatus
+        cliente = cliente,
+        prestamos = prestamos,
+        estatus_clientes = cte_service.get_status()
     )
 
 @cte_bp.route('/agregar_cliente')
 @loguin_requerid
 def agregar_cliente():
-    estatus_clientes = cte_service.get_status()
-    tiposarchivos = arch_service.get_file_types()
-    tiposprestamos = prst_service.get_tipos()
-    estatusprestamos = prst_service.get_status()
-    
     return render_template(
         'add_clientes.html',
-        estatus_clientes=estatus_clientes,
-        tipos_archivos = tiposarchivos,
-        tipos_prestamos = tiposprestamos,
-        estatus_prestamos = estatusprestamos
+        estatus_clientes = cte_service.get_status(),
+        tipos_archivos = arch_service.get_file_types(),
+        tipos_prestamos = prst_service.get_tipos(),
+        estatus_prestamos = prst_service.get_status()
     )
 
 @cte_bp.route('/subir_cliente', methods=['POST'])
@@ -71,9 +63,9 @@ def subir_cliente():
         id_correo = cte_service.procesar_correo(form)
         id_cliente = cte_service.procesar_cliente(form, id_correo)
 
-        cte_service.procesar_archivos(files, form, id_cliente)
+        arch_service.procesar_archivos(files, form, id_cliente)
         cte_service.procesar_telefonos(form, id_cliente)
-        cte_service.procesar_prestamos(form, id_cliente)
+        prst_service.procesar_prestamos(form, id_cliente)
     
         return redirect(url_for('cte_bp.detalle_cliente', cte_id=id_cliente))
     
