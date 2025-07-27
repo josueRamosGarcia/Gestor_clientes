@@ -1,10 +1,12 @@
-from flask import Blueprint, request, render_template, redirect, url_for, current_app, flash
+from flask import (
+    Blueprint, request, render_template, redirect,
+    url_for, current_app, flash   
+)
 from ..services.auth_service import AuthService
 from ..services.cliente_service import ClienteService
 from ..services.archivos_service import ArchivoServices
 from ..services.prest_service import PrestamoService
 from ..utils.decorators import loguin_requerid
-from ..utils.helpers import filtrar_datos
 from cloudinary.utils import cloudinary_url
 
 cte_bp = Blueprint('cte_bp', __name__)
