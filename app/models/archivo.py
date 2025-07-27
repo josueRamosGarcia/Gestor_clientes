@@ -1,69 +1,60 @@
 from .base import db
 from datetime import datetime, timezone
 
-class TipoArchivo(db.Model):
-    __tablename__ = 'tipos_archivos'
+class FileType(db.Model):
+    __tablename__ = 'file_types'
     
-    ta_id = db.Column(
+    ft_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    ta_nombre = db.Column(
+    ft_name = db.Column(
         db.String(32),
-        nullable=False
+        nullable = False
     )
 
-    archivos = db.relationship(
-        'Archivo',
-        back_populates='tipo'
+    files = db.relationship(
+        'File',
+        back_populates = 'file_type'
     )
 
-    def __repr__(self):
-        return f"{self.ta_id} - {self.ta_nombre}"
+class File(db.Model):
+    __tablename__ = 'files'
 
-class Archivo(db.Model):
-    __tablename__ = 'archivos'
-
-    arch_id = db.Column(
+    fil_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    arch_url = db.Column(
+    fil_url = db.Column(
         db.Text,
-        nullable=False
+        nullable = False
     )
-    arch_nombre = db.Column(
+    fil_name = db.Column(
         db.String(64),
-        nullable=False
+        nullable = False
     ) 
-    arch_f_subida = db.Column(
-        db.DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc)
+    fil_up_dt = db.Column(
+        db.DateTime(timezone = True),
+        default = lambda: datetime.now(timezone.utc)
     )
-    ta_id = db.Column(
+    ft_id = db.Column(
         db.Integer,
-        db.ForeignKey('tipos_archivos.ta_id'),
-        nullable=False
+        db.ForeignKey('file_types.ft_id'),
+        nullable = False
     )
-    cte_id = db.Column(
+    cl_id = db.Column(
         db.Integer,
-        db.ForeignKey('clientes.cte_id'),
-        nullable=False
+        db.ForeignKey('clients.cl_id'),
+        nullable = False
     )
 
-    tipo = db.relationship(
-        'TipoArchivo',
-        back_populates='archivos'
+    file_type = db.relationship(
+        'FileType',
+        back_populates='files'
     )
-    cliente = db.relationship(
-        'Cliente',
-        back_populates='archivos'
+    client = db.relationship(
+        'Client',
+        back_populates='files'
     )
-
-    def __repr__(self):
-        return (
-            f"{self.arch_id} - {self.arch_url} - {self.arch_nombre} - "
-            f"{self.arch_f_subida} - {self.ta_id} - {self.cte_id}"
-        )

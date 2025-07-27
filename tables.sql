@@ -17,11 +17,11 @@ CREATE TABLE clients (
     cl_lname    VARCHAR(64) NOT NULL,
     cl_curp     CHAR(18) NOT NULL UNIQUE,
     cl_nss      CHAR(11) NOT NULL UNIQUE,
-    cl_rfc      CHAR(13) UNIQUE,
+    cl_rfc      CHAR(13) NOT NULL UNIQUE,
     cs_id       INTEGER NOT NULL,
     em_id       INTEGER UNIQUE,
     FOREIGN KEY (cs_id) REFERENCES client_status (cs_id),
-    FOREIGN KEY (em_id) REFERENCES emails (cs_id)
+    FOREIGN KEY (em_id) REFERENCES emails (em_id)
 );
 
 CREATE TABLE phone_numbers (
@@ -62,8 +62,8 @@ CREATE TABLE loans (
     fi_id           INTEGER NOT NULL,
     ls_id           INTEGER NOT NULL,
     lt_id           INTEGER NOT NULL,
-    FOREIGN KEY (cl_id) REFERENCES loans (ln_id),
-    FOREIGN KEY (fi_id) REFERENCES financial_institution (fi_id),
+    FOREIGN KEY (cl_id) REFERENCES clients (cl_id),
+    FOREIGN KEY (fi_id) REFERENCES financial_institutions (fi_id),
     FOREIGN KEY (ls_id) REFERENCES loan_status (ls_id),
     FOREIGN KEY (lt_id) REFERENCES loan_types (lt_id)
 );
@@ -72,7 +72,7 @@ CREATE TABLE loans (
 CREATE TABLE file_types (
     ft_id   SERIAL PRIMARY KEY,
     ft_name VARCHAR(32) NOT NULL
-)
+);
 
 CREATE TABLE files (
     fil_id      SERIAL PRIMARY KEY,
@@ -81,9 +81,9 @@ CREATE TABLE files (
     fil_up_dt   DATE DEFAULT CURRENT_TIMESTAMP,
     ft_id       INTEGER NOT NULL,
     cl_id       INTEGER NOT NULL,
-    FOREIGN KEY (ft_id) REFERENCES files_types (ft_id),
+    FOREIGN KEY (ft_id) REFERENCES file_types (ft_id),
     FOREIGN KEY (cl_id) REFERENCES clients (cl_id)
-)
+);
 
 -- User tables
 CREATE TABLE users (
@@ -92,13 +92,13 @@ CREATE TABLE users (
     usr_username    VARCHAR(32) NOT NULL UNIQUE,
     usr_password    VARCHAR(256) NOT NULL,
     usr_is_active   BOOLEAN DEFAULT TRUE
-)
+);
 
 -- Audit tables
 CREATE TABLE audit_operations (
     op_id   SERIAL PRIMARY KEY,
     op_name VARCHAR(32) NOT NULL
-)
+);
 
 CREATE TABLE audit_events (
     ev_id       SERIAL PRIMARY KEY,
@@ -109,6 +109,6 @@ CREATE TABLE audit_events (
     ev_ip       VARCHAR(45) NOT NULL,
     op_id       INTEGER NOT NULL,
     usr_id      INTEGER NOT NULL,
-    FOREIGN KEY (op_id) REFERENCES audit_events (op_id),
+    FOREIGN KEY (op_id) REFERENCES audit_operations (op_id),
     FOREIGN KEY (usr_id) REFERENCES users (usr_id)
-)
+);

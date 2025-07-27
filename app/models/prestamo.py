@@ -1,120 +1,127 @@
 from .base import db
 
-class EstatusPrestamo(db.Model):
-    __tablename__ = 'estatus_prestamos'
+class FinancialInstitucion(db.Model):
+    __tablename__ = 'financial_institutions'
 
-    ep_id = db.Column(
+    fi_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    ep_nombre = db.Column(
+    fi_name = db.Column(
         db.String(32),
-        nullable=False
+        nullable = False
     )
 
-    prestamos = db.relationship(
-        'Prestamo',
-        back_populates='estatus'
+    loans = db.relationship(
+        'Loan',
+        back_populates = 'financial_institution'
     )
 
-    def __repr__(self):
-        return f"{self.ep_id} - {self.ep_nombre}"
-    
-class TipoPrestamo(db.Model):
-    __tablename__ = 'tipos_prestamos'
+class LoanStatus(db.Model):
+    __tablename__ = 'loan_status'
 
-    tp_id = db.Column(
+    ls_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    tp_nombre = db.Column(
+    ls_name = db.Column(
         db.String(32),
-        nullable=False
+        nullable = False
     )
 
-    prestamos = db.relationship(
-        'Prestamo',
-        back_populates='tipo'
+    loans = db.relationship(
+        'Loan',
+        back_populates = 'loan_status'
     )
 
-    def __repr__(self):
-        return f"{self.tp_id} - {self.tp_nombre}"
+class LoanType(db.Model):
+    __tablename__ = 'loan_types'
 
-class Prestamo(db.Model):
-    __tablename__ = 'prestamos'
-
-    prst_id = db.Column(
+    lt_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    prst_financiera = db.Column(
+    lt_name = db.Column(
         db.String(32),
-        nullable=False
+        nullable = False
     )
-    prst_cat = db.Column(
+
+    loans = db.relationship(
+        'Loan',
+        back_populates = 'loan_type'
+    )
+
+class Loan(db.Model):
+    __tablename__ = 'loans'
+
+    ln_id = db.Column(
+        db.Integer,
+        primary_key = True,
+        autoincrement = True
+    )
+    ln_cat = db.Column(
         db.Numeric(5,2),
-        nullable=False
+        nullable = False
     )
-    prst_monto = db.Column(
+    ln_amount = db.Column(
         db.Numeric(8,2),
-        nullable=False
+        nullable = False
     )
-    prst_descuento = db.Column(
+    ln_discount = db.Column(
         db.Numeric(7,2),
-        nullable=False
+        nullable = False
     )
-    prst_plazo = db.Column(
+    ln_term = db.Column(
         db.Integer,
-        nullable=False
+        nullable = False
     )
-    prst_imp_pagar = db.Column(
+    ln_am_pay = db.Column(
         db.Numeric(8,2),
-        nullable=False
+        nullable = False
     )
-    prst_f_p_desc = db.Column(
+    ln_f_disc_dt = db.Column(
         db.Date,
-        nullable=False
+        nullable = False
     )
-    prst_id_liq = db.Column(
+    ln_liq_id = db.Column(
         db.Integer
     )
-    cte_id = db.Column(
+    cl_id = db.Column(
         db.Integer,
-        db.ForeignKey('clientes.cte_id'),
-        nullable=False
+        db.ForeignKey('clients.cl_id'),
+        nullable = False
     )
-    tp_id = db.Column(
+    fi_id = db.Column(
         db.Integer,
-        db.ForeignKey('tipos_prestamos.tp_id'),
-        nullable=False
+        db.ForeignKey('financial_institutions.fi_id')
     )
-    ep_id = db.Column(
+    ls_id = db.Column(
         db.Integer,
-        db.ForeignKey('estatus_prestamos.ep_id'),
-        nullable=False
+        db.ForeignKey('loan_status.ls_id'),
+        nullable = False
+    )
+    lt_id = db.Column(
+        db.Integer,
+        db.ForeignKey('loan_types.lt_id'),
+        nullable = False
     )
 
-    cliente = db.relationship(
-        'Cliente',
-        back_populates='prestamos'
+    client = db.relationship(
+        'Client',
+        back_populates = 'loans'
     )
-    tipo = db.relationship(
-        'TipoPrestamo',
-        back_populates='prestamos'
+    financial_institution = db.relationship(
+        'FinancialInstitucion',
+        back_populates = 'loans'
     )
-    estatus = db.relationship(
-        'EstatusPrestamo',
-        back_populates='prestamos'
+    loan_type = db.relationship(
+        'LoanType',
+        back_populates = 'loans'
     )
-
-    def __repr__(self):
-        return (
-            f"{self.prst_id} - {self.prst_financiera} - {self.prst_cat} - "
-            f"{self.prst_monto} - {self.prst_descuento} - "
-            f"{self.prst_plazo} - {self.prst_imp_pagar} - "
-            f"{self.prst_f_p_desc} - {self.prst_id_liq} - "
-            f"{self.cte_id} - {self.tp_id} - {self.ep_id}"
-        )
+    loan_status = db.relationship(
+        'LoanStatus',
+        back_populates = 'loans'
+    )

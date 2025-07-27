@@ -1,160 +1,139 @@
 from .base import db
 
-class EstatusCliente(db.Model):
-    __tablename__ = 'estatus_clientes'
+class ClientStatus(db.Model):
+    __tablename__ = 'client_status'
 
-    ec_id = db.Column(
+    cs_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    ec_nombre = db.Column(
+    cs_name = db.Column(
         db.String(32),
-        nullable=False
+        nullable = False
     )
 
-    clientes = db.relationship(
-        'Cliente',
-        back_populates='estatus'
+    clients = db.relationship(
+        'Client',
+        back_populates = 'client_status'
     )
 
-    def __repr__(self):
-        return f"{self.ec_id} - {self.ec_nombre}"
+class Email(db.Model):
+    __tablename__ = 'emails'
 
-class Correo(db.Model):
-    __tablename__ = 'correos'
-
-    corr_id = db.Column(
+    em_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    corr_nombre = db.Column(
+    em_name = db.Column(
         db.String(64),
-        nullable=False,
-        unique=True
+        nullable = False,
+        unique = True
     )
-    corr_contraseña = db.Column(
+    em_password = db.Column(
         db.String(256)
     )
-    corr_localizacion = db.Column(
+    em_location = db.Column(
         db.String(64)
     )
 
-    cliente = db.relationship(
-        'Cliente',
-        back_populates='correo',
-        uselist=False
+    client = db.relationship(
+        'Client',
+        back_populates = 'email',
+        uselist = False
     )
 
-    def __repr__(self):
-        return (
-            f"{self.corr_id} - {self.corr_nombre} - "
-            f"{self.corr_localizacion}"
-        )
+class Client(db.Model):
+    __tablename__ = 'clients'
 
-class Cliente(db.Model):
-    __tablename__ = 'clientes'
-
-    cte_id = db.Column(
+    cl_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    cte_nombre = db.Column(
+    cl_name = db.Column(
         db.String(64),
-        nullable=False
+        nullable = False
     )
-    cte_apellidos = db.Column(
+    cl_lname = db.Column(
         db.String(64),
-        nullable=False
+        nullable = False
     )
-    cte_curp = db.Column(
+    cl_curp = db.Column(
         db.String(18),
-        nullable=False,
-        unique=True
+        nullable = False,
+        unique = True
     )
-    cte_nss = db.Column(
+    cl_nss = db.Column(
         db.String(11),
-        nullable=False,
-        unique=True
+        nullable = False,
+        unique = True
     )
-    cte_rfc = db.Column(
+    cl_rfc = db.Column(
         db.String(13),
-        unique=True
+        nullable = False,
+        unique = True
     )
-    ec_id = db.Column(
+    cs_id = db.Column(
         db.Integer,
-        db.ForeignKey('estatus_clientes.ec_id'),
-        nullable=False
+        db.ForeignKey('client_status.cs_id'),
+        nullable = False
     )
-    corr_id = db.Column(
+    em_id = db.Column(
         db.Integer,
-        db.ForeignKey('correos.corr_id'),
-        unique=True
+        db.ForeignKey('emails.em_id'),
+        unique = True
     )
 
-    estatus = db.relationship(
-        'EstatusCliente',
-        back_populates='clientes'
+    client_status = db.relationship(
+        'ClientStatus',
+        back_populates = 'clients'
     )
-    correo = db.relationship(
-        'Correo',
-        back_populates='cliente'
+    email = db.relationship(
+        'Email',
+        back_populates = 'client'
     )
-    telefonos = db.relationship(
-        'Telefono',
-        back_populates='cliente'
+    phone_numbers = db.relationship(
+        'PhoneNumber',
+        back_populates = 'client'
     )
-    prestamos = db.relationship(
-        'Prestamo',
-        back_populates='cliente'
+    loans = db.relationship(
+        'Loan',
+        back_populates = 'client'
     )
-    archivos = db.relationship(
-        'Archivo',
-        back_populates='cliente'
+    files = db.relationship(
+        'File',
+        back_populates = 'client'
     )
 
-    def __repr__(self):
-        return (
-            f"{self.cte_id} - {self.cte_nombre} - {self.cte_apellidos} - "
-            f"{self.cte_curp} - {self.cte_nss} - {self.cte_rfc} - "
-            f"{self.ec_id} - {self.corr_id}"
-        )
-    
-class Telefono(db.Model):
-    __tablename__ = 'telefonos'
+class PhoneNumber(db.Model):
+    __tablename__ = 'phone_numbers'
 
-    tel_id = db.Column(
+    ph_id = db.Column(
         db.Integer,
-        primary_key=True,
-        autoincrement=True
+        primary_key = True,
+        autoincrement = True
     )
-    tel_telefono = db.Column(
+    ph_number = db.Column(
         db.String(10),
-        nullable=False
+        nullable = False
     )
-    tel_nombre = db.Column(
+    ph_name = db.Column(
         db.String(128),
-        nullable=False
+        nullable = False
     )
-    tel_parentesco = db.Column(
+    ph_rel = db.Column(
         db.String(64),
-        nullable=False
+        nullable = False
     )
-    cte_id = db.Column(
+    cl_id = db.Column(
         db.Integer,
-        db.ForeignKey('clientes.cte_id'),
-        nullable=False
+        db.ForeignKey('clients.cl_id'),
+        nullable = False
     )
 
-    cliente = db.relationship(
-        'Cliente',
-        back_populates='telefonos'
+    client = db.relationship(
+        'Client',
+        back_populates = 'phone_numbers'
     )
-
-    def __repr__(self):
-        return (
-            f"{self.tel_id} - {self.tel_telefono} - {self.tel_nombre} - "
-            f"{self.tel_parentesco} - {self.cte_id}"
-        )
