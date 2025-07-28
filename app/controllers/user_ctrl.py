@@ -1,17 +1,17 @@
 from flask import Blueprint, render_template, request, session, redirect
-from ..services.auth_service import AuthService
+from ..services.user_svc import UserService
 from ..utils.helpers import get_client_ip
 from ..utils.decorators import loguin_requerid
 
-auth_bp = Blueprint('auth', __name__)
+user_bp = Blueprint('user', __name__)
 
-auth_service = AuthService()
+user_svc = UserService()
 
-@auth_bp.route('/')
+@user_bp.route('/')
 def login_page():
     return render_template('login.html')
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@user_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         session.clear()
@@ -20,7 +20,7 @@ def login():
     username = request.form.get('usuario')
     password = request.form.get('contraseña')
 
-    user, error = auth_service.authenticate_user(username, password)
+    user, error = user_svc.authenticate_user(username, password)
 
     if error:
         return redirect('/login')
@@ -30,9 +30,9 @@ def login():
 
     return redirect('/inicio')
 
-@auth_bp.route('/inicio')
+@user_bp.route('/inicio')
 @loguin_requerid
 def inicio():
-    usr = auth_service.get_logged_user()
+    usr = user_svc.get_logged_user()
 
     return render_template('/inicio.html', nombre_usuario=usr.usr_username)

@@ -2,7 +2,7 @@ from abc import ABC
 from config.database import db
 
 class BaseRepository(ABC):
-    def __init__(self,model):
+    def __init__(self, model):
         self.model = model
         self.db = db
         self.id_field = "id"

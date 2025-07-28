@@ -15,7 +15,7 @@ class AuditOperation(db.Model):
         nullable = False
     )
 
-    audit_event = db.relationship(
+    audit_events = db.relationship(
         'AuditEvent',
         back_populates = 'audit_operation'
     )
@@ -57,7 +57,7 @@ class AuditEvent(db.Model):
         nullable = False
     )
 
-    operation = db.relationship(
+    audit_operation = db.relationship(
         'AuditOperation',
         back_populates = 'audit_events'
     )

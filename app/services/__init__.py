@@ -1,7 +1,11 @@
-from .auth_service import AuthService
-from .cliente_service import ClienteService
+from .user_svc import UserService
+from .client_svc import ClientService
+from .file_svc import FileService
+from .loan_svc import LoanService
 
 __all__ = [
-    'AuthService',
-    'ClienteService'
+    'UserService',
+    'ClientService',
+    'FileService',
+    'LoanService'
 ]

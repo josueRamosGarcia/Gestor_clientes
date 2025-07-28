@@ -3,10 +3,14 @@ Módulo de repositorios para acceso a datos.
 Contiene implementaciones base y específicas de repositorios.
 """
 
-from .cliente_repository import ClienteRepository
-from .prestamo_repository import PrestamoRepository
+from .client_repo import ClientRepository
+from .loan_repo import LoanRepository
+from .file_repo import FileRepository
+from .user_repo import UserRepository
 
 __all__ = [
-    'ClienteRepository',
-    'PrestamoRepository'
+    'ClientRepository',
+    'LoanRepository',
+    'FileRepository',
+    'UserRepository'
 ]

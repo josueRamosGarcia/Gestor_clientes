@@ -14,5 +14,5 @@ def get_usr_id_log():
     """Obtener el usuario logueado de la sesión"""
     return session.get('usr_id')
 
-def filtrar_datos(dicc):
+def filter_data(dicc):
     return {k: v for k, v in dicc.items() if v}
