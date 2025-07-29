@@ -16,32 +16,32 @@ client_svc = ClientService()
 file_svc = FileService()
 loan_svc = LoanService()
 
-@client_bp.route('/buscar_clientes', methods=['POST'])
+@client_bp.route('/search_client', methods=['POST'])
 @loguin_requerid
-def buscar_clientes():
-    busqueda = request.form.get('busqueda','').strip()
+def search_client():
+    search = request.form.get('search','').strip()
     user = user_svc.get_logged_user()   
 
-    if busqueda:
-        clientes = client_svc.search_by_name(busqueda)
+    if search:
+        clients = client_svc.search_by_name(search)
 
         return render_template(
             'inicio.html',
-            nombre_usuario = user.usr_username,
-            clientes = clientes,
-            busqueda = busqueda
+            username = user.usr_username,
+            clients = clients,
+            search = search
         )
 
 @client_bp.route('/cliente/<int:cte_id>')
 @loguin_requerid
 def detalle_cliente(cte_id):
-    cliente, prestamos = client_svc.get_client_and_credits(cte_id)
+    client, prestamos = client_svc.get_client_and_credits(cte_id)
 
     return render_template(
         'details_clientes.html',
-        cliente = cliente,
+        client = client,
         prestamos = prestamos,
-        estatus_clientes = client_svc.get_status()
+        client_status = client_svc.get_status()
     )
 
 @client_bp.route('/agregar_cliente')
@@ -52,6 +52,7 @@ def agregar_cliente():
         estatus_clientes = client_svc.get_status(),
         tipos_archivos = file_svc.get_file_types(),
         tipos_prestamos = loan_svc.get_types(),
+        financieras = loan_svc.get_financial_institutions(),
         estatus_prestamos = loan_svc.get_status()
     )
 

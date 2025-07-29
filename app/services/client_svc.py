@@ -56,7 +56,6 @@ class ClientService:
         else:
             return None
         
-    
     def process_phone_numbers(self, form, cl_id):
         i = 0
 
@@ -66,14 +65,14 @@ class ClientService:
             relation = form.get(f'telefonos[{i}][tel_parentesco]')
 
             data = filter_data({
-                'ph_numeber': phone_numer,
+                'ph_number': phone_numer,
                 'ph_name':name,
                 'ph_rel': relation,
                 'cl_id': cl_id
             })
 
             try:
-                self.create_phone_number(**data)
+                print(self.create_phone_number(**data))
             except Exception as e:
                 current_app.logger.warning(f"Error creando teléfono {i}: {e}")
 

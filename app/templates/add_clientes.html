@@ -19,7 +19,7 @@
           <div class="card-body">
             <div class="header-info">
               <div class="d-flex align-items-center">
-                <a href="/inicio" class="btn btn-back me-3">
+                <a href="/home_page" class="btn btn-back me-3">
                   <i class="fas fa-arrow-left me-2"></i>
                   Volver al inicio
                 </a>
@@ -90,7 +90,7 @@
                       <select class="form-control" id="estatus" name="estatus" required>
                         <option value="">Seleccione...</option>
                         {% for estatus in estatus_clientes %}
-                        <option value="{{ estatus.ec_id }}">{{ estatus.ec_nombre }}</option>
+                        <option value="{{ estatus.cs_id }}">{{ estatus.cs_name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -275,7 +275,7 @@
               <select class="form-control" id="archivo-tipo" required>
                 <option value="">Seleccione...</option>
                 {% for tipo in tipos_archivos %}
-                <option value="{{ tipo.ta_id }}">{{ tipo.ta_nombre }}</option>
+                <option value="{{ tipo.ft_id }}">{{ tipo.ft_name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -312,7 +312,12 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-financiera">Financiera <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="prestamo-financiera" required>
+                  <select class="form-control" id="prestamo-financiera" required>
+                    <option value="">Seleccione...</option>
+                    {% for financiera in financieras %}
+                    <option value="{{ financiera.fi_id }}">{{ financiera.fi_name }}</option>
+                    {% endfor %}
+                  </select>
                 </div>
               </div>
               <div class="col-md-6">
@@ -321,7 +326,7 @@
                   <select class="form-control" id="prestamo-tipo" required>
                     <option value="">Seleccione...</option>
                     {% for tipo in tipos_prestamos %}
-                    <option value="{{ tipo.tp_id }}">{{ tipo.tp_nombre }}</option>
+                    <option value="{{ tipo.lt_id }}">{{ tipo.lt_name }}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -380,7 +385,7 @@
                   <select class="form-control" id="prestamo-estatus" required>
                     <option value="">Seleccione...</option>
                     {% for estatus in estatus_prestamos %}
-                    <option value="{{ estatus.ep_id }}">{{ estatus.ep_nombre }}</option>
+                    <option value="{{ estatus.ls_id }}">{{ estatus.ls_name }}</option>
                     {% endfor %}
                   </select>
                 </div>

@@ -96,7 +96,8 @@ class Loan(db.Model):
     )
     fi_id = db.Column(
         db.Integer,
-        db.ForeignKey('financial_institutions.fi_id')
+        db.ForeignKey('financial_institutions.fi_id'),
+        nullable = False
     )
     ls_id = db.Column(
         db.Integer,

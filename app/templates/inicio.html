@@ -22,7 +22,7 @@
               <div class="d-flex align-items-center">
                 <i class="fas fa-user-circle user-icon me-3"></i>
                 <div>
-                  <h2 class="user-name">Bienvenido, {{ nombre_usuario }}</h2>
+                  <h2 class="user-name">Bienvenido, {{ username }}</h2>
                   <small class="text-muted">Gestor de Clientes</small>
                 </div>
               </div>
@@ -58,11 +58,11 @@
 
             <!-- Sección de búsqueda -->
             <div class="search-section">
-              <form method="POST" action="/buscar_clientes">
+              <form method="POST" action="/search_client">
                 <div class="row">
                   <div class="col-md-9">
-                    <input type="text" class="form-control search-input" name="busqueda" id="busqueda"
-                      placeholder="Buscar por nombre, apellidos o CURP..." value="{{ busqueda if busqueda else '' }}"
+                    <input type="text" class="form-control search-input" name="search" id="busqueda"
+                      placeholder="Buscar por nombre, apellidos o CURP..." value="{{ search if search else '' }}"
                       required>
                   </div>
                   <div class="col-md-3">
@@ -77,8 +77,8 @@
 
             <!-- Tabla de resultados -->
             <div class="table-container">
-              {% if busqueda %}
-              {% if clientes and clientes|length > 0 %}
+              {% if search %}
+              {% if clients and clients|length > 0 %}
               <div class="table-responsive">
                 <table class="table table-hover">
                   <thead>
@@ -91,14 +91,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for cliente in clientes %}
-                    <tr onclick="window.location.href='/cliente/{{ cliente.cte_id }}'" style="cursor: pointer;">
-                      <td>{{ cliente.cte_nombre }}</td>
-                      <td>{{ cliente.cte_apellidos }}</td>
-                      <td>{{ cliente.cte_curp }}</td>
-                      <td>{{ cliente.cte_nss }}</td>
+                    {% for client in clients %}
+                    <tr onclick="window.location.href='/cliente/{{ client.cl_id }}'" style="cursor: pointer;">
+                      <td>{{ client.cl_name }}</td>
+                      <td>{{ client.cl_lname }}</td>
+                      <td>{{ client.cl_curp }}</td>
+                      <td>{{ client.cl_nss }}</td>
                       <td>
-                        {% if cliente.ec_id %}
+                        {% if client.cs_id %}
                         <span class="badge-active">Activo</span>
                         {% else %}
                         <span class="badge-inactive">Inactivo</span>
@@ -113,7 +113,7 @@
               <div class="no-results">
                 <i class="fas fa-search-minus"></i>
                 <h4>No se encontraron resultados</h4>
-                <p>No se encontraron clientes que coincidan con tu búsqueda "{{ busqueda }}"</p>
+                <p>No se encontraron clientes que coincidan con tu búsqueda "{{ search }}"</p>
               </div>
               {% endif %}
               {% else %}

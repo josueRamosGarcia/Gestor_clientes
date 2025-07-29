@@ -19,7 +19,7 @@
           <div class="card-body">
             <div class="header-info">
               <div class="d-flex align-items-center">
-                <a href="/inicio" class="btn btn-back me-3">
+                <a href="/home_page" class="btn btn-back me-3">
                   <i class="fas fa-arrow-left me-2"></i>
                   Volver al inicio
                 </a>
@@ -53,9 +53,9 @@
       <div class="col-12">
         <div class="card main-card">
           <div class="card-body p-4">
-            <form id="cliente-form" method="POST" action="/actualizar_cliente/{{ cliente.cte_id }}"
+            <form id="cliente-form" method="POST" action="/actualizar_cliente/{{ client.cl_id }}"
               enctype="multipart/form-data">
-              <input type="hidden" name="cte_id" value="{{ cliente.cte_id }}">
+              <input type="hidden" name="cl_id" value="{{ client.cl_id }}">
 
               <!-- Información básica -->
               <div class="client-info-section">
@@ -68,7 +68,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="nombre">Nombre <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente.cte_nombre }}"
+                      <input type="text" class="form-control" id="nombre" name="nombre" value="{{ client.cl_name }}"
                         disabled required>
                     </div>
                   </div>
@@ -76,13 +76,13 @@
                     <div class="form-group">
                       <label for="apellidos">Apellidos <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" id="apellidos" name="apellidos"
-                        value="{{ cliente.cte_apellidos }}" disabled required>
+                        value="{{ client.cl_lname }}" disabled required>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="curp">CURP <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="curp" name="curp" value="{{ cliente.cte_curp }}"
+                      <input type="text" class="form-control" id="curp" name="curp" value="{{ client.cl_curp }}"
                         maxlength="18" disabled required>
                       <small class="text-muted">18 caracteres</small>
                     </div>
@@ -93,7 +93,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="nss">NSS <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="nss" name="nss" value="{{ cliente.cte_nss }}"
+                      <input type="text" class="form-control" id="nss" name="nss" value="{{ client.cl_nss }}"
                         maxlength="11" disabled required>
                       <small class="text-muted">11 dígitos</small>
                     </div>
@@ -102,7 +102,7 @@
                     <div class="form-group">
                       <label for="rfc">RFC</label>
                       <input type="text" class="form-control" id="rfc" name="rfc"
-                        value="{{ cliente.cte_rfc if cliente.cte_rfc else '' }}" maxlength="13" disabled>
+                        value="{{ client.cl_rfc }}" maxlength="13" disabled>
                       <small class="text-muted">13 caracteres</small>
                     </div>
                   </div>
@@ -111,9 +111,9 @@
                       <label for="estatus">Estatus <span class="text-danger">*</span></label>
                       <select class="form-control" id="estatus" name="estatus" disabled required>
                         <option value="">Seleccione...</option>
-                        {% for estatus in estatus_clientes %}
-                        <option value="{{ estatus.ec_id }}" {% if cliente.ec_id==estatus.ec_id %}selected{% endif %}>{{
-                          estatus.ec_nombre }}</option>
+                        {% for status in client_status %}
+                        <option value="{{ status.cs_id }}" {% if client.cs_id == status.cs_id %}selected{% endif %}>{{
+                          status.cs_name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -134,7 +134,7 @@
                       <div class="form-group">
                         <label for="correo-email">Correo Electrónico</label>
                         <input type="email" class="form-control" id="correo-email" name="corr_nombre"
-                          value="{{ cliente.correo.corr_nombre if cliente.correo else '' }}" disabled>
+                          value="{{ client.email.em_name if client.email else '' }}" disabled>
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -142,7 +142,7 @@
                         <label for="correo-password">Contraseña</label>
                         <div class="password-wrapper">
                           <input type="password" class="form-control" id="correo-password" name="corr_contraseña"
-                            value="{{ cliente.correo.corr_contraseña if cliente.correo else '' }}" disabled>
+                            value="{{ client.email.em_password if client.email else '' }}" disabled>
                           <span class="password-toggle" onclick="togglePassword()">
                             <i class="fa fa-eye"></i>
                           </span>
@@ -155,7 +155,7 @@
                       <div class="form-group">
                         <label for="correo-localizacion">Localización</label>
                         <input type="text" class="form-control" id="correo-localizacion" name="corr_localizacion"
-                          value="{{ cliente.correo.corr_localizacion if cliente.correo else '' }}" disabled>
+                          value="{{ client.email.em_location if client.email else '' }}" disabled>
                       </div>
                     </div>
                   </div>
@@ -177,7 +177,7 @@
                 </div>
 
                 <div id="telefonos-container">
-                  {% if cliente.telefonos and cliente.telefonos|length > 0 %}
+                  {% if client.phone_numbers and client.phone_numbers|length > 0 %}
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
@@ -189,18 +189,18 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for telefono in cliente.telefonos %}
-                        <tr id="telefono-{{ telefono.tel_id }}">
-                          <td>{{ telefono.tel_telefono }}</td>
-                          <td>{{ telefono.tel_nombre }}</td>
-                          <td>{{ telefono.tel_parentesco }}</td>
+                        {% for phone in client.phone_numbers %}
+                        <tr id="telefono-{{ phone.ph_id }}">
+                          <td>{{ phone.ph_number }}</td>
+                          <td>{{ phone.ph_name }}</td>
+                          <td>{{ phone.ph_rel }}</td>
                           <td>
                             <button type="button" class="btn btn-edit-small btn-edit-telefono"
-                              data-id="{{ telefono.tel_id }}" disabled>
+                              data-id="{{ phone.ph_id }}" disabled>
                               <i class="fas fa-edit"></i>
                             </button>
                             <button type="button" class="btn btn-cancel-small btn-delete-telefono"
-                              data-id="{{ telefono.tel_id }}" disabled>
+                              data-id="{{ phone.ph_id }}" disabled>
                               <i class="fas fa-trash"></i>
                             </button>
                           </td>
@@ -232,7 +232,7 @@
                 </div>
 
                 <div id="archivos-container">
-                  {% if cliente.archivos and cliente.archivos|length > 0 %}
+                  {% if client.files and client.files|length > 0 %}
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
@@ -244,17 +244,17 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for archivo in cliente.archivos %}
-                        <tr id="archivo-{{ archivo.arch_id }}">
-                          <td>{{ archivo.tipo.ta_nombre }}</td>
-                          <td>{{ archivo.arch_nombre }}</td>
-                          <td>{{ archivo.arch_f_subida.strftime('%d/%m/%Y') }}</td>
+                        {% for file in client.files %}
+                        <tr id="archivo-{{ file.fil_id }}">
+                          <td>{{ file.file_type.ft_name }}</td>
+                          <td>{{ file.fil_name }}</td>
+                          <td>{{ file.fil_up_dt.strftime('%d/%m/%Y') }}</td>
                           <td>
-                            <a href="{{ archivo.arch_url }}" class="btn btn-edit-small" target="_blank">
+                            <a href="{{ file.fil_url }}" class="btn btn-edit-small" target="_blank">
                               <i class="fas fa-eye"></i>
                             </a>
                             <button type="button" class="btn btn-cancel-small btn-delete-archivo"
-                              data-id="{{ archivo.arch_id }}" disabled>
+                              data-id="{{ file.fil_id }}" disabled>
                               <i class="fas fa-trash"></i>
                             </button>
                           </td>
@@ -286,7 +286,7 @@
                 </div>
 
                 <div id="prestamos-container">
-                  {% if cliente.prestamos and cliente.prestamos|length > 0 %}
+                  {% if client.loans and client.loans|length > 0 %}
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
@@ -300,25 +300,25 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for prestamo in cliente.prestamos %}
-                        <tr id="prestamo-{{ prestamo.prst_id }}">
-                          <td>{{ prestamo.prst_financiera }}</td>
-                          <td>{{ prestamo.prst_plazo }}</td>
-                          <td>${{ "{:,.2f}".format(prestamo.prst_monto) }}</td>
-                          <td>{{ prestamo.prst_descuento }}</td>
+                        {% for loan in client.loans %}
+                        <tr id="prestamo-{{ loan.ln_id }}">
+                          <td>{{ loan.financial_institution.fi_name }}</td>
+                          <td>0/{{ loan.ln_term }}</td>
+                          <td>${{ "{:,.2f}".format(loan.ln_amount) }}</td>
+                          <td>${{ "{:,.2f}".format(loan.ln_discount) }}</td>
                           <td>
                             <span
-                              class="badge {% if prestamo.estatus.ep_nombre == 'VIGENTE' %}badge-active{% else %}badge-inactive{% endif %}">
-                              {{ prestamo.estatus.ep_nombre }}
+                              class="badge {% if loan.loan_status.ls_name == 'VIGENTE' %}badge-active{% else %}badge-inactive{% endif %}">
+                              {{ loan.loan_status.ls_name }}
                             </span>
                           </td>
                           <td>
                             <button type="button" class="btn btn-edit-small btn-edit-prestamo"
-                              data-id="{{ prestamo.prst_id }}" disabled>
+                              data-id="{{ loan.ln_id }}" disabled>
                               <i class="fas fa-edit"></i>
                             </button>
                             <button type="button" class="btn btn-cancel-small btn-delete-prestamo"
-                              data-id="{{ prestamo.prst_id }}" disabled>
+                              data-id="{{ loan.ln_id }}" disabled>
                               <i class="fas fa-trash"></i>
                             </button>
                           </td>
@@ -509,7 +509,7 @@
                   <label for="prestamo-liquida">Liquida otro préstamo</label>
                   <select class="form-control" id="prestamo-liquida">
                     <option value="">No aplica</option>
-                    {% for p in cliente.prestamos %}
+                    {% for p in client.prestamos %}
                     <option value="{{ p.prst_id }}">{{ p.prst_financiera }} - ${{ "{:,.2f}".format(p.prst_monto) }}
                     </option>
                     {% endfor %}

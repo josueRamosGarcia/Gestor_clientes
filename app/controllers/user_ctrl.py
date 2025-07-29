@@ -17,8 +17,8 @@ def login():
         session.clear()
         return render_template('login.html')
 
-    username = request.form.get('usuario')
-    password = request.form.get('contraseña')
+    username = request.form.get('username')
+    password = request.form.get('password')
 
     user, error = user_svc.authenticate_user(username, password)
 
@@ -28,11 +28,11 @@ def login():
     session['usr_id'] = user.usr_id
     session['ses_ip'] = get_client_ip()
 
-    return redirect('/inicio')
+    return redirect('/home_page')
 
-@user_bp.route('/inicio')
+@user_bp.route('/home_page')
 @loguin_requerid
-def inicio():
+def home_page():
     usr = user_svc.get_logged_user()
 
-    return render_template('/inicio.html', nombre_usuario=usr.usr_username)
+    return render_template('/inicio.html', username=usr.usr_username)

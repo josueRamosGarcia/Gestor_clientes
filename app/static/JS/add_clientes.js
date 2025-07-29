@@ -131,13 +131,13 @@ document.getElementById('subir-archivo').addEventListener('click', function () {
 document.getElementById('agregar-prestamo').addEventListener('click', function () {
     const financiera = document.getElementById('prestamo-financiera').value;
     const tipo = document.getElementById('prestamo-tipo').value;
+    const estatus = document.getElementById('prestamo-estatus').value;
     const cat = document.getElementById('prestamo-cat').value;
     const monto = document.getElementById('prestamo-monto').value;
     const descuento = document.getElementById('prestamo-descuento').value;
     const plazo = document.getElementById('prestamo-plazo').value;
     const importe = document.getElementById('prestamo-importe').value;
     const fecha = document.getElementById('prestamo-fecha').value;
-    const estatus = document.getElementById('prestamo-estatus').value;
     const liquida = document.getElementById('prestamo-liquida').value;
 
     // Validar campos obligatorios
@@ -224,12 +224,13 @@ function actualizarListaPrestamos() {
   `;
 
     prestamos.forEach((prestamo, index) => {
-        const tipoNombre = document.getElementById('prestamo-tipo').options[prestamo.tipo - 1].text;
-        const estatusNombre = document.getElementById('prestamo-estatus').options[prestamo.estatus - 1].text;
+        const tipoNombre = document.getElementById('prestamo-tipo').options[prestamo.tipo].text;
+        const estatusNombre = document.getElementById('prestamo-estatus').options[prestamo.estatus].text;
+        const financieraNombre = document.getElementById('prestamo-financiera').options[prestamo.financiera].text;
 
         html += `
       <tr>
-        <td>${prestamo.financiera}</td>
+        <td>${financieraNombre}</td>
         <td>${tipoNombre}</td>
         <td>$${parseFloat(prestamo.monto).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         <td>${prestamo.cat}%</td>
@@ -252,7 +253,7 @@ function actualizarListaPrestamos() {
     // Agregar campos ocultos para cada préstamo
     prestamos.forEach((prestamo, index) => {
         html += `
-      <input type="hidden" name="prestamos[${index}][prst_financiera]" value="${prestamo.financiera}">
+      <input type="hidden" name="prestamos[${index}][fi_id]" value="${prestamo.financiera}">
       <input type="hidden" name="prestamos[${index}][tp_id]" value="${prestamo.tipo}">
       <input type="hidden" name="prestamos[${index}][prst_cat]" value="${prestamo.cat}">
       <input type="hidden" name="prestamos[${index}][prst_monto]" value="${prestamo.monto}">
