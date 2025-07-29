@@ -20,8 +20,8 @@ class FileService():
             if not file or file.filename == '':
                 continue
 
-            ft_id = form.get(f'archivos_info[{i}][ta_id]')
-            fil_name = form.get(f'archivos_info[{i}][arch_nombre]')
+            ft_id = form.get(f'fil_ft[{i}]')
+            fil_name = form.get(f'fil_name[{i}]')
 
             if not ft_id or not fil_name:
                 current_app.logger.warning(f"Faltan metadatos en archivo[{i}]")

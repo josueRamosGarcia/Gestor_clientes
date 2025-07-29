@@ -59,10 +59,10 @@ class ClientService:
     def process_phone_numbers(self, form, cl_id):
         i = 0
 
-        while f'telefonos[{i}][tel_telefono]' in form:
-            phone_numer = form.get(f'telefonos[{i}][tel_telefono]')
-            name =  form.get(f'telefonos[{i}][tel_nombre]')
-            relation = form.get(f'telefonos[{i}][tel_parentesco]')
+        while f'ph_number[{i}]' in form:
+            phone_numer = form.get(f'ph_number[{i}]')
+            name =  form.get(f'ph_name[{i}]')
+            relation = form.get(f'ph_rel[{i}]')
 
             data = filter_data({
                 'ph_number': phone_numer,

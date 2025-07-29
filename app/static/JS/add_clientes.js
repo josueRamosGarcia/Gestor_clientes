@@ -1,64 +1,52 @@
 // Variables para almacenar los datos temporales
-let telefonos = [];
-let archivos = [];
-let prestamos = [];
+let phone_numbers = [];
+let files = [];
 
-// Selecciona TODOS los inputs de texto y hace toUpperCase()
-const inputsTexto = document.querySelectorAll('input[type="text"]');
+// ---------- Eventos telefonos ----------
+// Agregar telefono
+document.getElementById('add_phone_number').addEventListener('click', function () {
+    const ph_number = document.getElementById('ph_number').value;
+    const ph_name = document.getElementById('ph_name').value;
+    const ph_rel = document.getElementById('ph_rel').value;
 
-inputsTexto.forEach(input => {
-    input.addEventListener('input', function() {
-        const start = this.selectionStart; // Guarda posición del cursor
-        const end = this.selectionEnd;
-        this.value = this.value.toUpperCase();
-        this.setSelectionRange(start, end); // Restaura posición del cursor
-    });
-});
-
-// Función para agregar teléfono
-document.getElementById('agregar-telefono').addEventListener('click', function () {
-    const numero = document.getElementById('telefono-numero').value;
-    const nombre = document.getElementById('telefono-nombre').value;
-    const parentesco = document.getElementById('telefono-parentesco').value;
-
-    if (!numero || !nombre || !parentesco) {
+    if (!ph_number || !ph_name || !ph_rel) {
         alert('Todos los campos son obligatorios');
         return;
     }
 
-    telefonos.push({
-        numero: numero,
-        nombre: nombre,
-        parentesco: parentesco
+    phone_numbers.push({
+        ph_number: ph_number,
+        ph_name: ph_name,
+        ph_rel: ph_rel
     });
 
-    actualizarListaTelefonos();
-    document.getElementById('telefono-form').reset();
-    bootstrap.Modal.getInstance(document.getElementById('telefonoModal')).hide();
+    updatePhoneList();
+    document.getElementById('ph-form').reset();
+    bootstrap.Modal.getInstance(document.getElementById('ph-modal')).hide();
 });
 
-// Función para actualizar la lista de teléfonos en la UI
-function actualizarListaTelefonos() {
-    const container = document.getElementById('telefonos-container');
+// Actualizar la lista telefonos
+function updatePhoneList() {
+    const container = document.getElementById('ph-container');
 
-    if (telefonos.length === 0) {
+    if (phone_numbers.length === 0) {
         container.innerHTML = '<div class="alert alert-info">No se han agregado teléfonos aún.</div>';
         return;
     }
 
     let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Número</th><th>Nombre</th><th>Parentesco</th><th>Acciones</th></tr></thead><tbody>';
 
-    telefonos.forEach((telefono, index) => {
+    phone_numbers.forEach((phone, i) => {
         html += `
         <tr>
-        <td>${telefono.numero}</td>
-        <td>${telefono.nombre}</td>
-        <td>${telefono.parentesco}</td>
+        <td>${phone.ph_number}</td>
+        <td>${phone.ph_name}</td>
+        <td>${phone.ph_rel}</td>
         <td>
-            <button class="btn btn-edit-small" onclick="editarTelefono(${index})">
+            <button class="btn btn-edit-small" onclick="editPhone(${i})">
             <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-cancel-small" onclick="eliminarTelefono(${index})">
+            <button class="btn btn-cancel-small" onclick="deletePhone(${i})">
             <i class="fas fa-trash"></i>
             </button>
         </td>
@@ -69,30 +57,49 @@ function actualizarListaTelefonos() {
     html += '</tbody></table></div>';
 
     // Agregar campos ocultos para cada teléfono
-    telefonos.forEach((telefono, index) => {
+    phone_numbers.forEach((phone, i) => {
         html += `
-        <input type="hidden" name="telefonos[${index}][tel_telefono]" value="${telefono.numero}">
-        <input type="hidden" name="telefonos[${index}][tel_nombre]" value="${telefono.nombre}">
-        <input type="hidden" name="telefonos[${index}][tel_parentesco]" value="${telefono.parentesco}">
+        <input type="hidden" name="ph_number[${i}]" value="${phone.ph_number}">
+        <input type="hidden" name="ph_name[${i}]" value="${phone.ph_name}">
+        <input type="hidden" name="ph_rel[${i}]" value="${phone.ph_rel}">
     `;
     });
 
     container.innerHTML = html;
 }
 
+// Editar telefono
+function editPhone(i) {
+    const phone = phone_numbers[i];
+    document.getElementById('ph_number').value = phone.ph_number;
+    document.getElementById('ph_name').value = phone.ph_name;
+    document.getElementById('ph_rel').value = phone.ph_rel;
 
+    phone_numbers.splice(i, 1);
+    updatePhoneList();
 
-// Función para subir archivo
-// Cambiaremos la lógica para usar el input multiple oculto y asociar metadatos
+    const modal = new bootstrap.Modal(document.getElementById('ph-modal'));
+    modal.show();
+}
 
-document.getElementById('subir-archivo').addEventListener('click', function () {
-    const tipo = document.getElementById('archivo-tipo').value;
-    const nombre = document.getElementById('archivo-nombre').value;
-    const fileInput = document.getElementById('archivo-file');
-    const multiInput = document.getElementById('archivos-multifile');
-    const metadatosDiv = document.getElementById('archivos-metadatos');
+// Eliminar telefono
+function deletePhone(i) {
+    if (confirm('¿Estás seguro de eliminar este teléfono?')) {
+        phone_numbers.splice(i, 1);
+        updatePhoneList();
+    }
+}
 
-    if (!tipo || !nombre || !fileInput.files.length) {
+// ---------- Eventos para archivos ----------
+// Agregar archivo
+document.getElementById('add_file').addEventListener('click', function () {
+    const fil_ft_id = document.getElementById('fil_ft_id').value;
+    const fil_name = document.getElementById('fil_name').value;
+    const fileInput = document.getElementById('fil-file');
+    const multiInput = document.getElementById('fil-multifile');
+    const metadatosDiv = document.getElementById('fil-metadatos');
+
+    if (!fil_ft_id || !fil_name || !fileInput.files.length) {
         alert('Todos los campos son obligatorios');
         return;
     }
@@ -109,25 +116,79 @@ document.getElementById('subir-archivo').addEventListener('click', function () {
     multiInput.files = dt.files;
 
     // Guardar metadatos en campos ocultos
-    const index = multiInput.files.length - 1;
+    const i = multiInput.files.length - 1;
     const taInput = document.createElement('input');
     taInput.type = 'hidden';
-    taInput.name = `archivos_info[${index}][ta_id]`;
-    taInput.value = tipo;
+    taInput.name = `fil_ft[${i}]`;
+    taInput.value = fil_ft_id;
     const nombreInput = document.createElement('input');
     nombreInput.type = 'hidden';
-    nombreInput.name = `archivos_info[${index}][arch_nombre]`;
-    nombreInput.value = nombre;
+    nombreInput.name = `fil_name[${i}]`;
+    nombreInput.value = fil_name;
     metadatosDiv.appendChild(taInput);
     metadatosDiv.appendChild(nombreInput);
 
     // Actualizar la lista visual
-    actualizarListaArchivos();
-    document.getElementById('archivo-form').reset();
-    bootstrap.Modal.getInstance(document.getElementById('archivoModal')).hide();
+    updateFileList();
+    document.getElementById('fil-form').reset();
+    bootstrap.Modal.getInstance(document.getElementById('fil-modal')).hide();
 });
 
-// Función para agregar préstamo
+// Actualizar la lista archivos
+function updateFileList() {
+    const container = document.getElementById('fil-container');
+    const multiInput = document.getElementById('fil-multifile');
+    const metadatosDiv = document.getElementById('fil-metadatos');
+
+    if (multiInput.files.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No se han subido documentos aún.</div>';
+        metadatosDiv.innerHTML = '';
+        return;
+    }
+    let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Tipo</th><th>Nombre</th><th>Archivo</th><th>Acciones</th></tr></thead><tbody>';
+    for (let i = 0; i < multiInput.files.length; i++) {
+        const fil_ft = document.querySelector(`input[name='fil_ft[${i}]']`)?.value || '';
+        const fil_name = document.querySelector(`input[name='fil_name[${i}]']`)?.value || '';
+        html += `
+            <tr>
+                <td>${fil_ft}</td>
+                <td>${fil_name}</td>
+                <td>${multiInput.files[i].name}</td>
+                <td>
+                    <button class="btn btn-cancel-small" onclick="deleteFile(${i})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+}
+
+// Editar archivo
+function editarArchivo(i) {
+    const files = files[i];
+    document.getElementById('fil_ft_id').value = files.tipo;
+    document.getElementById('fil_name').value = files.nombre;
+
+    archivos.splice(i, 1);
+    updateFileList();
+
+    const modal = new bootstrap.Modal(document.getElementById('archivoModal'));
+    modal.show();
+}
+
+// Eliminar archivo
+function deleteFile(i) {
+    if (confirm('¿Estás seguro de eliminar este archivo?')) {
+        archivos.splice(i, 1);
+        updateFileList();
+    }
+}
+
+// ---------- Eventos de prestamos ----------
+// Agregar préstamo
 document.getElementById('agregar-prestamo').addEventListener('click', function () {
     const financiera = document.getElementById('prestamo-financiera').value;
     const tipo = document.getElementById('prestamo-tipo').value;
@@ -164,40 +225,7 @@ document.getElementById('agregar-prestamo').addEventListener('click', function (
     bootstrap.Modal.getInstance(document.getElementById('prestamoModal')).hide();
 });
 
-// Función para actualizar la lista de archivos
-function actualizarListaArchivos() {
-    const container = document.getElementById('archivos-container');
-    const multiInput = document.getElementById('archivos-multifile');
-    const metadatosDiv = document.getElementById('archivos-metadatos');
-
-    if (multiInput.files.length === 0) {
-        container.innerHTML = '<div class="alert alert-info">No se han subido documentos aún.</div>';
-        metadatosDiv.innerHTML = '';
-        return;
-    }
-    let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Tipo</th><th>Nombre</th><th>Archivo</th><th>Acciones</th></tr></thead><tbody>';
-    for (let i = 0; i < multiInput.files.length; i++) {
-        const tipo = document.querySelector(`input[name='archivos_info[${i}][ta_id]']`)?.value || '';
-        const nombre = document.querySelector(`input[name='archivos_info[${i}][arch_nombre]']`)?.value || '';
-        html += `
-            <tr>
-                <td>${tipo}</td>
-                <td>${nombre}</td>
-                <td>${multiInput.files[i].name}</td>
-                <td>
-                    <button class="btn btn-cancel-small" onclick="eliminarArchivo(${i})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    }
-    html += '</tbody></table></div>';
-    container.innerHTML = html;
-}
-
-
-// Función para actualizar la lista de préstamos en la UI
+// Actualizar la lista prestamos
 function actualizarListaPrestamos() {
     const container = document.getElementById('prestamos-container');
 
@@ -251,64 +279,25 @@ function actualizarListaPrestamos() {
     html += '</tbody></table></div>';
 
     // Agregar campos ocultos para cada préstamo
-    prestamos.forEach((prestamo, index) => {
+    prestamos.forEach((prestamo, i) => {
         html += `
-      <input type="hidden" name="prestamos[${index}][fi_id]" value="${prestamo.financiera}">
-      <input type="hidden" name="prestamos[${index}][tp_id]" value="${prestamo.tipo}">
-      <input type="hidden" name="prestamos[${index}][prst_cat]" value="${prestamo.cat}">
-      <input type="hidden" name="prestamos[${index}][prst_monto]" value="${prestamo.monto}">
-      <input type="hidden" name="prestamos[${index}][prst_descuento]" value="${prestamo.descuento}">
-      <input type="hidden" name="prestamos[${index}][prst_plazo]" value="${prestamo.plazo}">
-      <input type="hidden" name="prestamos[${index}][prst_imp_pagar]" value="${prestamo.importe}">
-      <input type="hidden" name="prestamos[${index}][prst_f_p_desc]" value="${prestamo.fecha}">
-      <input type="hidden" name="prestamos[${index}][ep_id]" value="${prestamo.estatus}">
-      ${prestamo.liquida ? `<input type="hidden" name="prestamos[${index}][prst_id_liq]" value="${prestamo.liquida}">` : ''}
+        <input type="hidden" name="ln_cat[${i}]" value="${prestamo.cat}">
+        <input type="hidden" name="ln_monto[${i}]" value="${prestamo.monto}">
+        <input type="hidden" name="ln_descuento[${i}]" value="${prestamo.descuento}">
+        <input type="hidden" name="ln_plazo[${i}]" value="${prestamo.plazo}">
+        <input type="hidden" name="ln_imp_pagar[${i}]" value="${prestamo.importe}">
+        <input type="hidden" name="ln_f_p_desc[${i}]" value="${prestamo.fecha}">
+        <input type="hidden" name="ln_fi_id[${i}]" value="${prestamo.financiera}">
+        <input type="hidden" name="ln_tp_id[${i}]" value="${prestamo.tipo}">
+        <input type="hidden" name="ln_ep_id[${i}]" value="${prestamo.estatus}">
+        ${prestamo.liquida ? `<input type="hidden" name="ln_id_liq[${i}]" value="${prestamo.liquida}">` : ''}
     `;
     });
 
     container.innerHTML = html;
 }
 
-function editarTelefono(index) {
-    const telefono = telefonos[index];
-    document.getElementById('telefono-numero').value = telefono.numero;
-    document.getElementById('telefono-nombre').value = telefono.nombre;
-    document.getElementById('telefono-parentesco').value = telefono.parentesco;
-
-    telefonos.splice(index, 1);
-    actualizarListaTelefonos();
-
-    const modal = new bootstrap.Modal(document.getElementById('telefonoModal'));
-    modal.show();
-}
-
-function eliminarTelefono(index) {
-    if (confirm('¿Estás seguro de eliminar este teléfono?')) {
-        telefonos.splice(index, 1);
-        actualizarListaTelefonos();
-    }
-}
-
-function editarArchivo(index) {
-    const archivo = archivos[index];
-    document.getElementById('archivo-tipo').value = archivo.tipo;
-    document.getElementById('archivo-nombre').value = archivo.nombre;
-
-    archivos.splice(index, 1);
-    actualizarListaArchivos();
-
-    const modal = new bootstrap.Modal(document.getElementById('archivoModal'));
-    modal.show();
-}
-
-function eliminarArchivo(index) {
-    if (confirm('¿Estás seguro de eliminar este archivo?')) {
-        archivos.splice(index, 1);
-        actualizarListaArchivos();
-    }
-}
-
-// Funciones para editar/eliminar préstamos
+// Editar prestamo
 function editarPrestamo(index) {
     const prestamo = prestamos[index];
 
@@ -330,6 +319,7 @@ function editarPrestamo(index) {
     modal.show();
 }
 
+// Eliminar prestamo
 function eliminarPrestamo(index) {
     if (confirm('¿Estás seguro de eliminar este préstamo?')) {
         prestamos.splice(index, 1);
@@ -337,6 +327,8 @@ function eliminarPrestamo(index) {
     }
 }
 
+// ---------- Otros metodos ----------
+// Metodo para ver/ocultar contraseña
 function togglePassword() {
     const passwordField = document.getElementById('correo-password');
     const toggleIcon = document.querySelector('.password-toggle i');
@@ -349,3 +341,15 @@ function togglePassword() {
         toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
     }
 }
+
+// Selecciona todos los inputs de texto y hace toUpperCase()
+const inputsTexto = document.querySelectorAll('input[type="text"]');
+
+inputsTexto.forEach(input => {
+    input.addEventListener('input', function () {
+        const start = this.selectionStart; // Guarda posición del cursor
+        const end = this.selectionEnd;
+        this.value = this.value.toUpperCase();
+        this.setSelectionRange(start, end); // Restaura posición del cursor
+    });
+});

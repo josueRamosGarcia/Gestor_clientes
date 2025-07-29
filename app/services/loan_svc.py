@@ -13,15 +13,15 @@ class LoanService:
         i = 0
 
         while f'prestamos[{i}][fi_id]' in form:
-            cat = form.get(f'prestamos[{i}][prst_cat]')
-            amount = form.get(f'prestamos[{i}][prst_monto]')
-            discount = form.get(f'prestamos[{i}][prst_descuento]')
-            term = form.get(f'prestamos[{i}][prst_plazo]')
-            amount_pay = form.get(f'prestamos[{i}][prst_imp_pagar]')
-            f_disc_dt = form.get(f'prestamos[{i}][prst_f_p_desc]')
-            fi_id = form.get(f'prestamos[{i}][fi_id]')
-            lt_id = form.get(f'prestamos[{i}][tp_id]')
-            ls_id = form.get(f'prestamos[{i}][ep_id]')
+            cat = form.get(f'ln_cat[${i}]')
+            amount = form.get(f'ln_monto[${i}]')
+            discount = form.get(f'ln_descuento[${i}]')
+            term = form.get(f'ln_plazo[${i}]')
+            amount_pay = form.get(f'ln_imp_pagar[${i}]')
+            f_disc_dt = form.get(f'ln_f_p_desc[${i}]')
+            fi_id = form.get(f'ln_fi_id[${i}]')
+            lt_id = form.get(f'ln_tp_id[${i}]')
+            ls_id = form.get(f'ln_ep_id[${i}]')
 
             data = filter_data({
                 'ln_cat': cat,
