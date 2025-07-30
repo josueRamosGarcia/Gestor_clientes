@@ -1,6 +1,7 @@
 // Variables para almacenar los datos temporales
 let phone_numbers = [];
 let files = [];
+let prestamos = [];
 
 // ---------- Eventos telefonos ----------
 // Agregar telefono
@@ -166,25 +167,45 @@ function updateFileList() {
     container.innerHTML = html;
 }
 
-// Editar archivo
-function editarArchivo(i) {
-    const files = files[i];
-    document.getElementById('fil_ft_id').value = files.tipo;
-    document.getElementById('fil_name').value = files.nombre;
-
-    archivos.splice(i, 1);
-    updateFileList();
-
-    const modal = new bootstrap.Modal(document.getElementById('archivoModal'));
-    modal.show();
-}
-
 // Eliminar archivo
 function deleteFile(i) {
     if (confirm('¿Estás seguro de eliminar este archivo?')) {
-        archivos.splice(i, 1);
+        const multiInput = document.getElementById('fil-multifile');
+        const metadatosDiv = document.getElementById('fil-metadatos');
+        const dt = new DataTransfer();
+        
+        
+        // Agrega los archivos ya existentes
+        for (let j = 0; j < multiInput.files.length; j++) {
+            if(i != j){
+                dt.items.add(multiInput.files[j]);
+            }
+        }
+        multiInput.files = dt.files;
+        
+        const fil_ft = document.querySelector(`input[name='fil_ft[${i}]']`);
+        const fil_name = document.querySelector(`input[name='fil_name[${i}]']`);
+        
+        fil_ft.remove();
+        fil_name.remove();
+
+        reindexMetadata();
         updateFileList();
     }
+}
+
+function reindexMetadata() {
+    const metadatosDiv = document.getElementById('fil-metadatos');
+    const inputsFt = metadatosDiv.querySelectorAll('input[name^="fil_ft["]');
+    const inputsName = metadatosDiv.querySelectorAll('input[name^="fil_name["]');
+
+    inputsFt.forEach((input, index) => {
+        input.name = `fil_ft[${index}]`;  // Reindexa fil_ft[0], fil_ft[1], etc.
+    });
+
+    inputsName.forEach((input, index) => {
+        input.name = `fil_name[${index}]`; // Reindexa fil_name[0], fil_name[1], etc.
+    });
 }
 
 // ---------- Eventos de prestamos ----------
@@ -244,6 +265,8 @@ function actualizarListaPrestamos() {
             <th>Monto</th>
             <th>CAT</th>
             <th>Plazo</th>
+            <th>Monto a pagar</th>
+            <th>Primer descuento</th>
             <th>Estatus</th>
             <th>Acciones</th>
           </tr>
@@ -263,6 +286,8 @@ function actualizarListaPrestamos() {
         <td>$${parseFloat(prestamo.monto).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         <td>${prestamo.cat}%</td>
         <td>${prestamo.plazo} meses</td>
+        <td>$${prestamo.importe}</td>
+        <td>${prestamo.fecha}</td>
         <td>${estatusNombre}</td>
         <td>
           <button class="btn btn-edit-small" onclick="editarPrestamo(${index})">

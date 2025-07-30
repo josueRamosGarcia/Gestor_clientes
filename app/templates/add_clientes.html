@@ -79,8 +79,8 @@
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label for="rfc">RFC</label>
-                      <input type="text" class="form-control" id="rfc" name="rfc" maxlength="13">
+                      <label for="rfc">RFC <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="rfc" name="rfc" maxlength="13" required>
                       <small class="text-muted">13 caracteres</small>
                     </div>
                   </div>
@@ -177,7 +177,7 @@
                   </div>
                 </div>
                 <!-- Input de archivos multiple oculto -->
-                <input type="file" name="archivos" class="form-control d-none" id="fil-multifile" multiple>
+                <input type="file" name="files" class="form-control d-none" id="fil-multifile" multiple>
                 <!-- Aquí se agregarán los campos ocultos de metadatos por JS -->
                 <div id="fil-metadatos"></div>
               </div>
@@ -242,7 +242,7 @@
             </div>
             <div class="form-group mb-3">
               <label for="ph_name">Nombre <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="ph_name" required>
+              <input type="text" class="form-control" id="ph_name" " required>
               <small class="text-muted">Nombre completo</small>
             </div>
             <div class="form-group mb-3">
@@ -272,7 +272,7 @@
           <form id="fil-form">
             <div class="form-group mb-3">
               <label for="fil_ft_id">Tipo de Documento <span class="text-danger">*</span></label>
-              <select class="form-control" id="fil_ft_id" required>
+              <select class="form-control" required>
                 <option value="">Seleccione...</option>
                 {% for tipo in tipos_archivos %}
                 <option value="{{ tipo.ft_id }}">{{ tipo.ft_name }}</option>
@@ -312,7 +312,7 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-financiera">Financiera <span class="text-danger">*</span></label>
-                  <select class="form-control" id="prestamo-financiera" required>
+                  <select class="form-control" id="prestamo-financiera" id="fil_ft_id[0]" required>
                     <option value="">Seleccione...</option>
                     {% for financiera in financieras %}
                     <option value="{{ financiera.fi_id }}">{{ financiera.fi_name }}</option>

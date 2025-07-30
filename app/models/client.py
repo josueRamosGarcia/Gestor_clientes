@@ -1,4 +1,6 @@
 from .base import db
+from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta    
 
 class ClientStatus(db.Model):
     __tablename__ = 'client_status'
@@ -46,6 +48,35 @@ class Email(db.Model):
 
 class Client(db.Model):
     __tablename__ = 'clients'
+
+    @property
+    def birthdate_curp(self):
+        """Extrae la fecha de nacimiento de la CURP"""
+        if not self.cl_curp or len(self.cl_curp) < 10:
+            return None
+            
+        fecha_str = self.cl_curp[4:10]
+        try:
+            # Ajuste para años: 00-99 -> 2000-2099
+            year = int(fecha_str[:2]) + (2000 if int(fecha_str[:2]) < 50 else 1900)
+            return datetime.strptime(f"{year}{fecha_str[2:]}", "%Y%m%d").date()
+        except ValueError:
+            return None
+        
+    @property
+    def edad_exacta(self):
+        """Calcula la edad en formato 'X años Y meses'"""
+        if not self.birthdate_curp:
+            return "Fecha no disponible"
+            
+        hoy = datetime.now(timezone.utc).date()
+        delta = relativedelta(hoy, self.birthdate_curp)
+        
+        # Manejo de plurales
+        años = f"{delta.years} año{'s' if delta.years != 1 else ''}"
+        meses = f"{delta.months} mes{'es' if delta.months != 1 else ''}"
+        
+        return f"{años} y {meses}"
 
     cl_id = db.Column(
         db.Integer,

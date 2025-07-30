@@ -1,4 +1,6 @@
 from .base import db
+from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta 
 
 class FinancialInstitucion(db.Model):
     __tablename__ = 'financial_institutions'
@@ -56,6 +58,25 @@ class LoanType(db.Model):
 
 class Loan(db.Model):
     __tablename__ = 'loans'
+
+    @property
+    def months_since_first_discount(self):
+        """
+        Calcula los meses transcurridos desde la fecha de primer descuento.
+        Retorna 0 si no hay fecha definida.
+        """
+        # 1. Verificamos si existe la fecha
+        if not self.ln_f_disc_dt:
+            return 0
+            
+        # 2. Obtenemos la fecha actual (UTC para consistencia)
+        current_date = datetime.now(timezone.utc).date()
+        
+        # 3. Calculamos la diferencia usando relativedelta (más preciso que días/30)
+        delta = relativedelta(current_date, self.ln_f_disc_dt)
+        
+        # 4. Convertimos años a meses y sumamos los meses restantes
+        return delta.years * 12 + delta.months + 1
 
     ln_id = db.Column(
         db.Integer,

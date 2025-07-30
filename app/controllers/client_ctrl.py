@@ -41,7 +41,11 @@ def detalle_cliente(cte_id):
         'details_clientes.html',
         client = client,
         prestamos = prestamos,
-        client_status = client_svc.get_status()
+        client_status = client_svc.get_status(),
+        tipos_archivos = file_svc.get_file_types(),
+        tipos_prestamos = loan_svc.get_types(),
+        financieras = loan_svc.get_financial_institutions(),
+        estatus_prestamos = loan_svc.get_status()
     )
 
 @client_bp.route('/agregar_cliente')
@@ -70,6 +74,47 @@ def subir_cliente():
         client_svc.process_phone_numbers(form, cl_id)
         loan_svc.process_loans(form, cl_id)
     
+        return redirect(url_for('client_bp.detalle_cliente', cte_id = cl_id))
+    
+    except Exception as e:
+        current_app.logger.exception("Error al subir cliente")
+        flash("Ocurrió un error al subir los datos del cliente.")
+        return redirect(request.referrer)
+    
+@client_bp.route('/subir_telefono/<int:cl_id>', methods=['POST'])
+@loguin_requerid
+def subir_telefono(cl_id):
+    try:
+        form = request.form
+        client_svc.process_phone_numbers(form, cl_id)
+        return redirect(url_for('client_bp.detalle_cliente', cte_id = cl_id))
+    
+    except Exception as e:
+        current_app.logger.exception("Error al subir cliente")
+        flash("Ocurrió un error al subir los datos del cliente.")
+        return redirect(request.referrer)
+    
+    
+@client_bp.route('/subir_prestamo/<int:cl_id>', methods=['POST'])
+@loguin_requerid
+def subir_prestamo(cl_id):
+    try:
+        form = request.form
+        loan_svc.process_loans(form, cl_id)
+        return redirect(url_for('client_bp.detalle_cliente', cte_id = cl_id))
+    
+    except Exception as e:
+        current_app.logger.exception("Error al subir cliente")
+        flash("Ocurrió un error al subir los datos del cliente.")
+        return redirect(request.referrer)
+    
+@client_bp.route('/subir_archivo/<int:cl_id>', methods=['POST'])
+@loguin_requerid
+def subir_archivo(cl_id):
+    try:
+        form = request.form
+        file = request.files.get('file')
+        file_svc.process_single_file(file, form, cl_id)
         return redirect(url_for('client_bp.detalle_cliente', cte_id = cl_id))
     
     except Exception as e:

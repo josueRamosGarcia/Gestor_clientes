@@ -13,7 +13,7 @@ class ClientRepository(BaseRepository):
                 self.model.cl_name.ilike(f"%{search}%"),
                 self.model.cl_lname.ilike(f"%{search}%")
             )
-        ).all()
+        ).order_by(self.model.cl_name, self.model.cl_lname).all()
 
     def get_client_id_by_curp(self, curp):
         return self.db.session.query(self.model.cl_id).filter_by(
