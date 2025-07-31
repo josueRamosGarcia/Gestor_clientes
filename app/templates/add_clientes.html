@@ -289,7 +289,7 @@
           <form id="fil-form">
             <div class="form-group mb-3">
               <label for="fil_ft_id">Tipo de Documento <span class="text-danger">*</span></label>
-              <select class="form-control" required>
+              <select class="form-control" id="fil_ft_id" required>
                 <option value="">Seleccione...</option>
                 {% for tipo in tipos_archivos %}
                 <option value="{{ tipo.ft_id }}">{{ tipo.ft_name }}</option>
@@ -329,7 +329,7 @@
               <div class="col-md-6">
                 <div class="form-group mb-3">
                   <label for="prestamo-financiera">Financiera <span class="text-danger">*</span></label>
-                  <select class="form-control" id="prestamo-financiera" id="fil_ft_id[0]" required>
+                  <select class="form-control" id="prestamo-financiera" required>
                     <option value="">Seleccione...</option>
                     {% for financiera in financieras %}
                     <option value="{{ financiera.fi_id }}">{{ financiera.fi_name }}</option>
