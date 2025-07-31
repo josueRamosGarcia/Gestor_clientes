@@ -57,8 +57,7 @@ class Client(db.Model):
             
         fecha_str = self.cl_curp[4:10]
         try:
-            # Ajuste para años: 00-99 -> 2000-2099
-            year = int(fecha_str[:2]) + (2000 if int(fecha_str[:2]) < 50 else 1900)
+            year = int(fecha_str[:2]) + 1900
             return datetime.strptime(f"{year}{fecha_str[2:]}", "%Y%m%d").date()
         except ValueError:
             return None
