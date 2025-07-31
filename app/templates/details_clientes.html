@@ -299,7 +299,7 @@
               </div>
 
               <!-- Seccion de observaciones -->
-              <form action="/actualizar_observaciones/{{ client.cl_id }}" method="post">
+              <form action="/actualizar_observaciones/{{ client.cl_id }}" method="POST">
                 <div class="client-info-section mt-4">
                   <h3 class="mb-4">
                       <i class="fas fa-comment text-primary me-2"></i>
@@ -381,7 +381,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="archivo-form" action="/subir_archivo/{{ client.cl_id }}" method="post" enctype="multipart/form-data">
+          <form id="archivo-form" action="/subir_archivo/{{ client.cl_id }}" method="POST" enctype="multipart/form-data">
             <input type="hidden" id="archivo-id">
             <div class="form-group mb-3">
               <label for="fil_ft_id">Tipo de Documento <span class="text-danger">*</span></label>
@@ -419,7 +419,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="prestamo-form" action="/subir_prestamo/{{ client.cl_id }}" method="post">
+          <form id="prestamo-form" action="/subir_prestamo/{{ client.cl_id }}" method="POST">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group mb-3">
