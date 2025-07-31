@@ -121,3 +121,11 @@ def subir_archivo(cl_id):
         current_app.logger.exception("Error al subir cliente")
         flash("Ocurrió un error al subir los datos del cliente.")
         return redirect(request.referrer)
+    
+@client_bp.route('/actualizar_observaciones/<int:cl_id>', methods=['POST'])
+@loguin_requerid
+def actualizar_observaciones(cl_id):
+    observaciones = request.form.get('observaciones')
+
+    client_svc.update(cl_id, cl_obs=observaciones)
+    return redirect(url_for('client_bp.detalle_cliente', cte_id = cl_id))

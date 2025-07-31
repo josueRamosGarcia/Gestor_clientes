@@ -39,10 +39,6 @@
       <div class="col-12">
         <div class="card main-card">
           <div class="card-body p-4">
-            <form id="cliente-form" method="POST" action="/actualizar_cliente/{{ client.cl_id }}"
-              enctype="multipart/form-data">
-              <input type="hidden" name="cl_id" value="{{ client.cl_id }}">
-
               <!-- Información básica -->
               <div class="client-info-section">
                 <h3 class="mb-4">
@@ -301,7 +297,39 @@
                   {% endif %}
                 </div>
               </div>
-            </form>
+
+              <!-- Seccion de observaciones -->
+              <form action="/actualizar_observaciones/{{ client.cl_id }}" method="post">
+                <div class="client-info-section mt-4">
+                  <h3 class="mb-4">
+                      <i class="fas fa-comment text-primary me-2"></i>
+                      Observaciones
+                  </h3>
+                  <div class="form-group">
+                      <textarea
+                          id="observaciones-textarea"
+                          class="form-control fixed-textarea" 
+                          name="observaciones" 
+                          maxlength="250"
+                          placeholder="Escribe aquí..."
+                          readonly="true"
+                      >{{ client.cl_obs | default('', true) }}</textarea>
+                      <small class="text-muted"><span id="char-count">0</span>/250 caracteres</small>
+                  </div>
+                  <!-- Botones (inicialmente solo "Editar" visible) -->
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-edit-small" id="editar-observaciones">
+                      <i class="fas fa-edit me-1"></i> Editar
+                    </button>
+                    <button type="submit" class="btn btn-save d-none" id="guardar-observaciones">
+                      <i class="fas fa-save me-1"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-cancel-small d-none" id="cancelar-observaciones">
+                      <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+                  </div>
+                </div>
+              </form>
           </div>
         </div>
       </div>

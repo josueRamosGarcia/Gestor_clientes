@@ -23,6 +23,7 @@ class ClientService:
         curp = form.get('curp')
         nss = form.get('nss')
         rfc = form.get('rfc')
+        obs = form.get('observaciones')
         cs_id = form.get('estatus')
 
         data = filter_data({
@@ -31,6 +32,7 @@ class ClientService:
             'cl_curp': curp,
             'cl_nss' : nss,
             'cl_rfc' : rfc,
+            'cl_obs' : obs,
             'cs_id': cs_id,
             'em_id' : em_id
         })

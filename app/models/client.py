@@ -106,6 +106,9 @@ class Client(db.Model):
         nullable = False,
         unique = True
     )
+    cl_obs = db.Column(
+        db.String(256)
+    )
     cs_id = db.Column(
         db.Integer,
         db.ForeignKey('client_status.cs_id'),

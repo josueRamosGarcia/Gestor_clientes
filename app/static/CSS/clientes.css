@@ -322,6 +322,10 @@ body {
   color: #333;
 }
 
+.fixed-textarea {
+    resize: none;          /* Desactiva redimensionamiento */
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
     .header-info {

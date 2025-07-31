@@ -378,3 +378,9 @@ inputsTexto.forEach(input => {
         this.setSelectionRange(start, end); // Restaura posición del cursor
     });
 });
+
+// Agrega esto en add_clientes.js
+document.querySelector('textarea[name="observaciones"]').addEventListener('input', function(e) {
+    const charCount = e.target.value.length;
+    document.getElementById('char-count').textContent = charCount;
+}); 
